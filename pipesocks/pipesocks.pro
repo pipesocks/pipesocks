@@ -10,11 +10,13 @@ SOURCES += main.cpp \
     tcpsocket.cpp \
     securesocket.cpp \
     tcpserver.cpp \
-    udpsocket.cpp
+    udpsocket.cpp \
+    pipe.cpp
 
 HEADERS += tcpsocket.h \
     securesocket.h \
     tcpserver.h \
-    udpsocket.h
+    udpsocket.h \
+    pipe.h
 
 LIBS += -lsodium
