@@ -9,10 +9,12 @@ TEMPLATE = app
 SOURCES += main.cpp \
     tcpsocket.cpp \
     securesocket.cpp \
-    tcpserver.cpp
+    tcpserver.cpp \
+    udpsocket.cpp
 
 HEADERS += tcpsocket.h \
     securesocket.h \
-    tcpserver.h
+    tcpserver.h \
+    udpsocket.h
 
 LIBS += -lsodium
