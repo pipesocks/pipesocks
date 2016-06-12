@@ -8,10 +8,10 @@ class UdpSocket : public QUdpSocket {
 public:
     explicit UdpSocket(QObject *parent = 0);
 signals:
-    void SendData(const QHostAddress Host,unsigned short Port,const QByteArray &Data);
-    void RecvData(const QHostAddress Host,unsigned short Port,const QByteArray &Data);
+    void SendData(const QHostAddress &Host,unsigned short Port,const QByteArray &Data);
+    void RecvData(const QHostAddress &Host,unsigned short Port,const QByteArray &Data);
 private slots:
-    void SendDataSlot(const QHostAddress Host,unsigned short Port,const QByteArray &Data);
+    void SendDataSlot(const QHostAddress &Host,unsigned short Port,const QByteArray &Data);
     void RecvDataSlot();
 };
 

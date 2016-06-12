@@ -5,7 +5,7 @@ UdpSocket::UdpSocket(QObject *parent):QUdpSocket(parent) {
     connect(this,SIGNAL(readyRead()),this,SLOT(RecvDataSlot()));
 }
 
-void UdpSocket::SendDataSlot(const QHostAddress Host,unsigned short Port,const QByteArray &Data) {
+void UdpSocket::SendDataSlot(const QHostAddress &Host,unsigned short Port,const QByteArray &Data) {
     writeDatagram(Data,Host,Port);
 }
 
