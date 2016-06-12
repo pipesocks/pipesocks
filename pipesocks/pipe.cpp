@@ -15,9 +15,6 @@ Pipe::Pipe(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,QO
     sthread=new QThread;
     ssock->moveToThread(sthread);
     sthread->start();
-    thread=new QThread;
-    moveToThread(thread);
-    thread->start();
 }
 
 void Pipe::ClientRecv(const QByteArray &Data) {
@@ -32,12 +29,12 @@ void Pipe::EndSession() {
     csock->disconnectFromHost();
     csock->deleteLater();
     cthread->exit();
+    cthread->wait();
     cthread->deleteLater();
     ssock->disconnectFromHost();
     ssock->deleteLater();
     sthread->exit();
+    sthread->wait();
     sthread->deleteLater();
-    thread->exit();
-    thread->deleteLater();
     deleteLater();
 }

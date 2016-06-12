@@ -8,9 +8,6 @@ PAC::PAC(qintptr handle,QObject *parent):QObject(parent) {
     cthread=new QThread;
     csock->moveToThread(cthread);
     cthread->start();
-    thread=new QThread;
-    moveToThread(thread);
-    thread->start();
 }
 
 void PAC::RecvData(const QByteArray &Data) {
@@ -21,8 +18,7 @@ void PAC::EndSession() {
     csock->disconnectFromHost();
     csock->deleteLater();
     cthread->exit();
+    cthread->wait();
     cthread->deleteLater();
-    thread->exit();
-    thread->deleteLater();
     deleteLater();
 }

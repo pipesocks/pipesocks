@@ -17,9 +17,6 @@ Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,cons
     sthread->start();
     usock=NULL;
     uthread=NULL;
-    thread=new QThread;
-    moveToThread(thread);
-    thread->start();
     status=Initiated;
 }
 
@@ -39,18 +36,19 @@ void Tap::EndSession() {
     csock->disconnectFromHost();
     csock->deleteLater();
     cthread->exit();
+    cthread->wait();
     cthread->deleteLater();
     ssock->disconnectFromHost();
     ssock->deleteLater();
     sthread->exit();
+    sthread->wait();
     sthread->deleteLater();
     if (usock) {
         usock->close();
         usock->deleteLater();
         uthread->exit();
+        uthread->wait();
         uthread->deleteLater();
     }
-    thread->exit();
-    thread->deleteLater();
     deleteLater();
 }

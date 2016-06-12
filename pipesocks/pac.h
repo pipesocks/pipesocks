@@ -11,7 +11,7 @@ public:
     explicit PAC(qintptr handle,QObject *parent = 0);
 private:
     TcpSocket *csock;
-    QThread *cthread,*thread;
+    QThread *cthread;
 private slots:
     void RecvData(const QByteArray &Data);
     void EndSession();

@@ -11,7 +11,7 @@ public:
     explicit Pipe(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,QObject *parent = 0);
 private:
     TcpSocket *csock,*ssock;
-    QThread *cthread,*sthread,*thread;
+    QThread *cthread,*sthread;
 private slots:
     void ClientRecv(const QByteArray &Data);
     void ServerRecv(const QByteArray &Data);

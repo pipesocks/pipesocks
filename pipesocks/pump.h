@@ -21,7 +21,7 @@ private:
     SecureSocket *csock;
     TcpSocket *ssock;
     UdpSocket *usock;
-    QThread *cthread,*sthread,*uthread,*thread;
+    QThread *cthread,*sthread,*uthread;
 private slots:
     void ClientRecv(const QByteArray &Data);
     void ServerRecv(const QByteArray &Data);
