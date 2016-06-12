@@ -15,6 +15,7 @@ void PAC::RecvData(const QByteArray &Data) {
 }
 
 void PAC::EndSession() {
+    emit csock->Disconnect();
     cthread->exit();
     cthread->wait();
     csock->deleteLater();

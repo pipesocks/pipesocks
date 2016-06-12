@@ -21,7 +21,19 @@ Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,cons
 }
 
 void Tap::ClientRecv(const QByteArray &Data) {
+    switch (status) {
+        case Initiated:
 
+            break;
+        case Handshook:
+
+            break;
+        case CONNECT:
+
+            break;
+        case UDPASSOCIATE:
+            break;
+    }
 }
 
 void Tap::ServerRecv(const QByteArray &Data) {
@@ -33,9 +45,11 @@ void Tap::UdpRecv(const QHostAddress&,unsigned short,const QByteArray &Data) {
 }
 
 void Tap::EndSession() {
+    emit csock->Disconnect();
     cthread->exit();
     cthread->wait();
     csock->deleteLater();
+    emit ssock->Disconnect();
     sthread->exit();
     sthread->wait();
     ssock->deleteLater();

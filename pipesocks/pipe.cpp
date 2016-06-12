@@ -26,9 +26,11 @@ void Pipe::ServerRecv(const QByteArray &Data) {
 }
 
 void Pipe::EndSession() {
+    emit csock->Disconnect();
     cthread->exit();
     cthread->wait();
     csock->deleteLater();
+    emit ssock->Disconnect();
     sthread->exit();
     sthread->wait();
     ssock->deleteLater();

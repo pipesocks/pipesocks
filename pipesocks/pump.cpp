@@ -28,10 +28,12 @@ void Pump::UdpRecv(const QHostAddress &Host,unsigned short Port,const QByteArray
 }
 
 void Pump::EndSession() {
+    emit csock->Disconnect();
     cthread->exit();
     cthread->wait();
     csock->deleteLater();
     if (ssock) {
+        emit ssock->Disconnect();
         sthread->exit();
         sthread->wait();
         ssock->deleteLater();

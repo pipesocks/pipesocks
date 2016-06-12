@@ -10,9 +10,11 @@ public:
 signals:
     void SendData(const QByteArray &Data);
     void RecvData(const QByteArray &Data);
+    void Disconnect();
 private slots:
     virtual void SendDataSlot(const QByteArray &Data);
     virtual void RecvDataSlot();
+    void DisconnectSlot();
 };
 
 #endif // TCPSOCKET_H
