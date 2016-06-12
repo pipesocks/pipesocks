@@ -5,14 +5,14 @@ Pump::Pump(qintptr handle,const QString &Password,QObject *parent):QObject(paren
     connect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     csock->setSocketDescriptor(handle);
-    cthread=new QThread(this);
+    cthread=new QThread;
     csock->moveToThread(cthread);
     cthread->start();
     ssock=NULL;
     sthread=NULL;
     usock=NULL;
     uthread=NULL;
-    thread=new QThread(this);
+    thread=new QThread;
     moveToThread(thread);
     thread->start();
     status=Initiated;
@@ -34,16 +34,20 @@ void Pump::EndSession() {
     csock->disconnectFromHost();
     csock->deleteLater();
     cthread->exit();
+    cthread->deleteLater();
     if (ssock) {
         ssock->disconnectFromHost();
         ssock->deleteLater();
         sthread->exit();
+        sthread->deleteLater();
     }
     if (usock) {
         usock->close();
         usock->deleteLater();
         uthread->exit();
+        uthread->deleteLater();
     }
     thread->exit();
+    thread->deleteLater();
     deleteLater();
 }
