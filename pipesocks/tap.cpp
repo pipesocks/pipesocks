@@ -1,6 +1,6 @@
-#include "pipe.h"
+#include "tap.h"
 
-Pipe::Pipe(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,QObject *parent):QObject(parent) {
+Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,const QString &LocalHost,QObject *parent):QObject(parent),LocalHost(LocalHost) {
     csock=new TcpSocket;
     connect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
@@ -8,33 +8,45 @@ Pipe::Pipe(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,QO
     cthread=new QThread(this);
     csock->moveToThread(cthread);
     cthread->start();
-    ssock=new TcpSocket;
+    ssock=new SecureSocket;
     connect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
     connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     ssock->connectToHost(RemoteHost,RemotePort);
     sthread=new QThread(this);
     ssock->moveToThread(sthread);
     sthread->start();
+    usock=NULL;
+    uthread=NULL;
     thread=new QThread(this);
     moveToThread(thread);
     thread->start();
+    status=Initiated;
 }
 
-void Pipe::ClientRecv(const QByteArray &Data) {
-    emit ssock->SendData(Data);
+void Tap::ClientRecv(const QByteArray &Data) {
+
 }
 
-void Pipe::ServerRecv(const QByteArray &Data) {
-    emit csock->SendData(Data);
+void Tap::ServerRecv(const QByteArray &Data) {
+
 }
 
-void Pipe::EndSession() {
+void Tap::UdpRecv(const QHostAddress Host,unsigned short Port,const QByteArray &Data) {
+
+}
+
+void Tap::EndSession() {
     csock->disconnectFromHost();
     csock->deleteLater();
     cthread->exit();
     ssock->disconnectFromHost();
     ssock->deleteLater();
     sthread->exit();
+    if (status==UDPASSOCIATE) {
+        usock->close();
+        usock->deleteLater();
+        uthread->exit();
+    }
     thread->exit();
     deleteLater();
 }

@@ -13,7 +13,7 @@ public:
         Tap,
         PAC
     };
-    explicit TcpServer(Mode mode,const QString &RemoteHost,unsigned short RemotePort,const QString &LocalHost, QObject *parent = 0);
+    explicit TcpServer(Mode mode,const QString &RemoteHost,unsigned short RemotePort,const QString &LocalHost,QObject *parent = 0);
 private:
     Mode mode;
     QString RemoteHost;

@@ -11,12 +11,19 @@ SOURCES += main.cpp \
     securesocket.cpp \
     tcpserver.cpp \
     udpsocket.cpp \
-    pipe.cpp
+    pipe.cpp \
+    tap.cpp \
+    pump.cpp
 
 HEADERS += tcpsocket.h \
     securesocket.h \
     tcpserver.h \
     udpsocket.h \
-    pipe.h
+    pipe.h \
+    tap.h \
+    pump.h
 
 LIBS += -lsodium
+
+DISTFILES += \
+    proxy.pac
