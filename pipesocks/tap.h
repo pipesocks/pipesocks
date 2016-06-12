@@ -28,7 +28,7 @@ private:
 private slots:
     void ClientRecv(const QByteArray &Data);
     void ServerRecv(const QByteArray &Data);
-    void UdpRecv(const QHostAddress Host,unsigned short Port,const QByteArray &Data);
+    void UdpRecv(const QHostAddress&,unsigned short,const QByteArray &Data);
     void EndSession();
 };
 

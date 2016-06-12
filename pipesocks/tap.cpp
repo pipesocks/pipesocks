@@ -31,7 +31,7 @@ void Tap::ServerRecv(const QByteArray &Data) {
 
 }
 
-void Tap::UdpRecv(const QHostAddress Host,unsigned short Port,const QByteArray &Data) {
+void Tap::UdpRecv(const QHostAddress&,unsigned short,const QByteArray &Data) {
 
 }
 

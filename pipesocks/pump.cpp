@@ -26,7 +26,7 @@ void Pump::ServerRecv(const QByteArray &Data) {
 
 }
 
-void Pump::UdpRecv(const QHostAddress Host,unsigned short Port,const QByteArray &Data) {
+void Pump::UdpRecv(const QHostAddress &Host,unsigned short Port,const QByteArray &Data) {
 
 }
 
