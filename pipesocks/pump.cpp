@@ -5,7 +5,7 @@ Pump::Pump(qintptr handle,const QString &Password,QObject *parent):QObject(paren
     connect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     csock->setSocketDescriptor(handle);
-    cthread=new QThread;
+    cthread=new QThread(csock);
     csock->moveToThread(cthread);
     cthread->start();
     ssock=NULL;
@@ -28,24 +28,18 @@ void Pump::UdpRecv(const QHostAddress &Host,unsigned short Port,const QByteArray
 }
 
 void Pump::EndSession() {
-    csock->disconnectFromHost();
-    csock->deleteLater();
     cthread->exit();
     cthread->wait();
-    cthread->deleteLater();
+    csock->deleteLater();
     if (ssock) {
-        ssock->disconnectFromHost();
-        ssock->deleteLater();
         sthread->exit();
         sthread->wait();
-        sthread->deleteLater();
+        ssock->deleteLater();
     }
     if (usock) {
-        usock->close();
-        usock->deleteLater();
         uthread->exit();
         uthread->wait();
-        uthread->deleteLater();
+        usock->deleteLater();
     }
     deleteLater();
 }
