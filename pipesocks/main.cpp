@@ -23,20 +23,20 @@ int main(int argc,char **argv) {
         if (type=="pump") {
             if (LocalPort==0)
                 LocalPort=1080;
-            server=new TcpServer(TcpServer::Pump,RemoteHost,RemotePort,LocalHost,Password);
+            server=new TcpServer(TcpServer::PumpServer,RemoteHost,RemotePort,LocalHost,Password);
         } else if (type=="pipe") {
             if (RemoteHost=="") {
-                printf("Pipesocks pipe needs Remote Host (-H Remote Host)");
+                printf("Pipesocks pipe needs Remote Host (-H Remote Host)\n");
                 return 0;
             }
             if (RemotePort==0)
                 RemotePort=1080;
             if (LocalPort==0)
                 LocalPort=1080;
-            server=new TcpServer(TcpServer::Pipe,RemoteHost,RemotePort,LocalHost,Password);
+            server=new TcpServer(TcpServer::PipeServer,RemoteHost,RemotePort,LocalHost,Password);
         } else if (type=="tap") {
             if (RemoteHost=="") {
-                printf("Pipesocks tap needs Remote Host (-H Remote Host)");
+                printf("Pipesocks tap needs Remote Host (-H Remote Host)\n");
                 return 0;
             }
             if (LocalHost=="")
@@ -45,11 +45,11 @@ int main(int argc,char **argv) {
                 RemotePort=1080;
             if (LocalPort==0)
                 LocalPort=1080;
-            server=new TcpServer(TcpServer::Tap,RemoteHost,RemotePort,LocalHost,Password);
+            server=new TcpServer(TcpServer::TapClient,RemoteHost,RemotePort,LocalHost,Password);
         } else if (type=="pac") {
             if (LocalPort==0)
                 LocalPort=80;
-            server=new TcpServer(TcpServer::PAC,RemoteHost,RemotePort,LocalHost,Password);
+            server=new TcpServer(TcpServer::PACServer,RemoteHost,RemotePort,LocalHost,Password);
         } else {
             printf("Usage: %s <pump|pipe|tap|pac> <arguments>\n\nArguments:\n\t-H Remote Host\n\t-P Remote Port <1080 by default>\n\t-h Local Host <127.0.0.1 by default>\n\t-p Local Port <80 for pac and 1080 for others by default>\n\t-k Password <empty by default>\n",*argv);
             return 0;

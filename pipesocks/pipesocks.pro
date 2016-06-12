@@ -13,7 +13,8 @@ SOURCES += main.cpp \
     udpsocket.cpp \
     pipe.cpp \
     tap.cpp \
-    pump.cpp
+    pump.cpp \
+    pac.cpp
 
 HEADERS += tcpsocket.h \
     securesocket.h \
@@ -21,7 +22,8 @@ HEADERS += tcpsocket.h \
     udpsocket.h \
     pipe.h \
     tap.h \
-    pump.h
+    pump.h \
+    pac.h
 
 LIBS += -lsodium
 

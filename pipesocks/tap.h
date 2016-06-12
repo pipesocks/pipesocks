@@ -10,7 +10,7 @@
 class Tap : public QObject {
     Q_OBJECT
 public:
-    explicit Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,const QString &LocalHost,QObject *parent = 0);
+    explicit Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,const QString &LocalHost,const QString &Password,QObject *parent = 0);
 private:
     enum Status {
         Initiated,
@@ -18,6 +18,7 @@ private:
         CONNECT,
         UDPASSOCIATE
     };
+    QString Password;
     Status status;
     QString LocalHost;
     TcpSocket *csock;

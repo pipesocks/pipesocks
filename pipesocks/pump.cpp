@@ -1,6 +1,6 @@
 #include "pump.h"
 
-Pump::Pump(qintptr handle,QObject *parent):QObject(parent) {
+Pump::Pump(qintptr handle,const QString &Password,QObject *parent):QObject(parent),Password(Password) {
     csock=new SecureSocket;
     connect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
@@ -15,6 +15,7 @@ Pump::Pump(qintptr handle,QObject *parent):QObject(parent) {
     thread=new QThread(this);
     moveToThread(thread);
     thread->start();
+    status=Initiated;
 }
 
 void Pump::ClientRecv(const QByteArray &Data) {

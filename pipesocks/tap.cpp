@@ -1,6 +1,6 @@
 #include "tap.h"
 
-Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,const QString &LocalHost,QObject *parent):QObject(parent),LocalHost(LocalHost) {
+Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,const QString &LocalHost,const QString &Password,QObject *parent):QObject(parent),Password(Password),LocalHost(LocalHost) {
     csock=new TcpSocket;
     connect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
@@ -42,7 +42,7 @@ void Tap::EndSession() {
     ssock->disconnectFromHost();
     ssock->deleteLater();
     sthread->exit();
-    if (status==UDPASSOCIATE) {
+    if (usock) {
         usock->close();
         usock->deleteLater();
         uthread->exit();

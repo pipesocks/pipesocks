@@ -10,8 +10,14 @@
 class Pump : public QObject {
     Q_OBJECT
 public:
-    explicit Pump(qintptr handle,QObject *parent = 0);
+    explicit Pump(qintptr handle,const QString &Password,QObject *parent = 0);
 private:
+    enum Status {
+        Initiated,
+        Connected
+    };
+    QString Password;
+    Status status;
     SecureSocket *csock;
     TcpSocket *ssock;
     UdpSocket *usock;
