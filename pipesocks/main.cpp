@@ -2,6 +2,13 @@
 #include <QApplication>
 #include "tcpserver.h"
 
+QString FindArg(const QStringList &Arguments,char Letter) {
+    int index=Arguments.indexOf(QString('-')+Letter);
+    if (index!=-1&&index<Arguments.size()-1)
+        return Arguments.at(index+1);
+    return QString();
+}
+
 int main(int argc,char **argv) {
     if (argc==1) {
         printf("If you want to use the CLI version\nUsage: %s [pump|pipe|tap|pac] <arguments>\n",*argv);
@@ -9,27 +16,37 @@ int main(int argc,char **argv) {
         return a.exec();
     } else {
         QCoreApplication a(argc,argv);
-        QString type(a.arguments().at(1));
-        TcpServer *server;
+        QStringList args=a.arguments();
+        QString type=args.at(1),RemoteHost=FindArg(args,'H'),LocalHost=FindArg(args,'h'),Password=FindArg(args,'k');
+        unsigned short RemotePort=FindArg(args,'P').toUInt(),LocalPort=FindArg(args,'p').toUInt();
         if (type=="pump") {
-            unsigned short localport=1080;
-            if (a.arguments().size()==3) {
-                localport=a.arguments().at(2).toUShort();
-            } else if (a.arguments().size()>3) {
-                printf("Usage: %s pump <bind port>\n",*argv);
+            if (LocalPort==0)
+                LocalPort=1080;
+        } else if (type=="pipe") {
+            if (RemoteHost=="") {
+                printf("Pipesocks pipe needs Remote Host (-H Remote Host)");
                 return 0;
             }
-            server=new TcpServer(TcpServer::Pump,QString(),0,QString());
-            server->listen(QHostAddress::Any,localport);
-            printf("Pipesocks pump server is listening at port %d\n",localport);
-        } else if (type=="pipe") {
-
+            if (RemotePort==0)
+                RemotePort=1080;
+            if (LocalPort==0)
+                LocalPort=1080;
         } else if (type=="tap") {
-
+            if (RemoteHost=="") {
+                printf("Pipesocks tap needs Remote Host (-H Remote Host)");
+                return 0;
+            }
+            if (LocalHost=="")
+                LocalHost="127.0.0.1";
+            if (RemotePort==0)
+                RemotePort=1080;
+            if (LocalPort==0)
+                LocalPort=1080;
         } else if (type=="pac") {
-
+            if (LocalPort==0)
+                LocalPort=80;
         } else {
-            printf("Usage: %s <pump|pipe|tap|pac> <arguments>\npump <bind port>\npipe [remote host] <remote port> <bind port>\ntap [remote host] <remote port> <local host> <bind port>\npac <bind port>\n",*argv);
+            printf("Usage: %s <pump|pipe|tap|pac> <arguments>\n\nArguments:\n\t-H Remote Host\n\t-P Remote Port <1080 by default>\n\t-h Local Host <127.0.0.1 by default>\n\t-p Local Port <80 for pac and 1080 for others by default>\n\t-k Password <empty by default>\n",*argv);
             return 0;
         }
         return a.exec();
