@@ -44,10 +44,17 @@ void Tap::ClientRecv(const QByteArray &Data) {
             status=Handshook;
             break;
         case Handshook:
-
+            if (Data[0]!=5||Data[1]!=1||Data[2]!=0||Data[3]!=3) {
+                emit csock->SendData(QByteArray::fromHex("05070001000000000000"));
+                emit csock->Disconnect();
+                return;
+            }
+            emit ssock->SendData(Data);
+            emit csock->SendData(QByteArray::fromHex("05000001000000000000"));
+            status=CONNECT;
             break;
         case CONNECT:
-
+            emit ssock->SendData(Data);
             break;
         case UDPASSOCIATE:
             break;
@@ -55,7 +62,7 @@ void Tap::ClientRecv(const QByteArray &Data) {
 }
 
 void Tap::ServerRecv(const QByteArray &Data) {
-
+    csock->SendData(Data);
 }
 
 void Tap::UdpRecv(const QHostAddress&,unsigned short,const QByteArray &Data) {
