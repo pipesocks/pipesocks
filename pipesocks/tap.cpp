@@ -21,9 +21,27 @@ Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,cons
 }
 
 void Tap::ClientRecv(const QByteArray &Data) {
+    bool ok;
     switch (status) {
         case Initiated:
-
+            if (Data[0]!=5) {
+                emit csock->Disconnect();
+                return;
+            }
+            ok=false;
+            for (int i=2;i<Data[1]+2;++i) {
+                if (Data[i]==0) {
+                    ok=true;
+                    break;
+                }
+            }
+            if (!ok) {
+                emit csock->SendData(QByteArray::fromHex("05ff"));
+                emit csock->Disconnect();
+                return;
+            }
+            emit csock->SendData(QByteArray::fromHex("0500"));
+            status=Handshook;
             break;
         case Handshook:
 

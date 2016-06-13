@@ -27,5 +27,4 @@ HEADERS += tcpsocket.h \
 
 LIBS += -lsodium
 
-DISTFILES += \
-    proxy.pac
+DISTFILES += proxy.pac
