@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     pipe.cpp \
     tap.cpp \
     pump.cpp \
-    pac.cpp
+    pac.cpp \
+    mainwidget.cpp
 
 HEADERS += tcpsocket.h \
     securesocket.h \
@@ -23,8 +24,11 @@ HEADERS += tcpsocket.h \
     pipe.h \
     tap.h \
     pump.h \
-    pac.h
+    pac.h \
+    mainwidget.h
 
 LIBS += -lsodium
 
 DISTFILES += proxy.pac
+
+FORMS += mainwidget.ui
