@@ -15,6 +15,7 @@ Pipe::Pipe(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,QO
     sthread=new QThread(ssock);
     ssock->moveToThread(sthread);
     sthread->start();
+    printf("[%s] New connection from %s:%d\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data(),csock->peerAddress().toString().toLocal8Bit().data(),csock->peerPort());
 }
 
 void Pipe::ClientRecv(const QByteArray &Data) {

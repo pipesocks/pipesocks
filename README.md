@@ -15,8 +15,7 @@ Or
 2) It is connected to a valid pipe. 
 
 ### Things remaining to be done
-- Finish SOCKS5 protocol
+- Finish UDP
 - Finish PAC
-- Add Password Verification
 - Add License to every file
 - Finish GUI

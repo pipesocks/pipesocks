@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QThread>
+#include <QDateTime>
+#include <QHostAddress>
 #include "tcpsocket.h"
 
 class Pipe : public QObject {

@@ -3,6 +3,10 @@
 
 #include <QObject>
 #include <QThread>
+#include <QJsonDocument>
+#include <QVariantMap>
+#include <QDateTime>
+#include <QHostInfo>
 #include "securesocket.h"
 #include "tcpsocket.h"
 #include "udpsocket.h"
@@ -14,7 +18,8 @@ public:
 private:
     enum Status {
         Initiated,
-        Connected
+        TCP,
+        UDP
     };
     QString Password;
     Status status;

@@ -12,5 +12,4 @@ void TcpServer::incomingConnection(qintptr handle) {
     } else if (mode==PACServer) {
         PAC *pac=new PAC(handle);
     }
-    puts((QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss]")+" New connection").toStdString().c_str());
 }
