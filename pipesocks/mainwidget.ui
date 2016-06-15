@@ -141,7 +141,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="StartButton">
+      <widget class="QPushButton" name="Start">
        <property name="text">
         <string>Start</string>
        </property>
