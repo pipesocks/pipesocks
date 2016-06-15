@@ -17,5 +17,4 @@ Or
 ### Things remaining to be done
 - Finish UDP
 - Finish PAC
-- Add License to every file
 - Finish GUI
