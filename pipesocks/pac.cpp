@@ -24,6 +24,7 @@ PAC::PAC(qintptr handle,QObject *parent):QObject(parent) {
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     csock->setSocketDescriptor(handle);
     cthread=new QThread(csock);
+    connect(csock,SIGNAL(disconnected()),cthread,SLOT(quit()));
     csock->moveToThread(cthread);
     cthread->start();
 }
@@ -33,8 +34,6 @@ void PAC::RecvData(const QByteArray &Data) {
 }
 
 void PAC::EndSession() {
-    emit csock->Disconnect();
-    cthread->exit();
     cthread->wait();
     csock->deleteLater();
     deleteLater();

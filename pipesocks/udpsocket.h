@@ -28,9 +28,11 @@ public:
 signals:
     void SendData(const QHostAddress &Host,unsigned short Port,const QByteArray &Data);
     void RecvData(const QHostAddress &Host,unsigned short Port,const QByteArray &Data);
+    void Disconnect();
 private slots:
     void SendDataSlot(const QHostAddress &Host,unsigned short Port,const QByteArray &Data);
     void RecvDataSlot();
+    void DisconnectSlot();
 };
 
 #endif // UDPSOCKET_H

@@ -24,6 +24,7 @@ Pump::Pump(qintptr handle,const QString &Password,QObject *parent):QObject(paren
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     csock->setSocketDescriptor(handle);
     cthread=new QThread(csock);
+    connect(csock,SIGNAL(disconnected()),cthread,SLOT(quit()));
     csock->moveToThread(cthread);
     cthread->start();
     ssock=NULL;
@@ -47,6 +48,7 @@ void Pump::ClientRecv(const QByteArray &Data) {
                 connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
                 ssock->connectToHost(qvm["host"].toString(),qvm["port"].toUInt());
                 sthread=new QThread(ssock);
+                connect(csock,SIGNAL(disconnected()),sthread,SLOT(quit()));
                 ssock->moveToThread(sthread);
                 sthread->start();
                 status=TCP;
@@ -89,20 +91,24 @@ void Pump::UdpRecv(const QHostAddress &Host,unsigned short Port,const QByteArray
 }
 
 void Pump::EndSession() {
-    emit csock->Disconnect();
-    cthread->exit();
-    cthread->wait();
-    csock->deleteLater();
+    if (csock) {
+        emit csock->Disconnect();
+        cthread->wait();
+        csock->deleteLater();
+        csock=NULL;
+    }
     if (ssock) {
         emit ssock->Disconnect();
-        sthread->exit();
         sthread->wait();
         ssock->deleteLater();
+        ssock=NULL;
     }
     if (usock) {
+        emit usock->Disconnect();
         uthread->exit();
         uthread->wait();
         usock->deleteLater();
+        usock=NULL;
     }
     deleteLater();
 }

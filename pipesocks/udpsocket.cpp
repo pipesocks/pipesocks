@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 UdpSocket::UdpSocket(QObject *parent):QUdpSocket(parent) {
     connect(this,SIGNAL(SendData(QHostAddress,unsigned short,QByteArray)),SLOT(SendDataSlot(QHostAddress,unsigned short,QByteArray)));
     connect(this,SIGNAL(readyRead()),this,SLOT(RecvDataSlot()));
+    connect(this,SIGNAL(Disconnect()),this,SLOT(DisconnectSlot()));
 }
 
 void UdpSocket::SendDataSlot(const QHostAddress &Host,unsigned short Port,const QByteArray &Data) {
@@ -36,4 +37,8 @@ void UdpSocket::RecvDataSlot() {
         readDatagram(Data.data(),Data.size(),&Host,&Port);
         emit RecvData(Host,Port,Data);
     }
+}
+
+void UdpSocket::DisconnectSlot() {
+    close();
 }

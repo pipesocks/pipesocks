@@ -24,6 +24,7 @@ Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,cons
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     csock->setSocketDescriptor(handle);
     cthread=new QThread(csock);
+    connect(csock,SIGNAL(disconnected()),cthread,SLOT(quit()));
     csock->moveToThread(cthread);
     cthread->start();
     ssock=new SecureSocket;
@@ -31,6 +32,7 @@ Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,cons
     connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     ssock->connectToHost(RemoteHost,RemotePort);
     sthread=new QThread(ssock);
+    connect(ssock,SIGNAL(disconnected()),sthread,SLOT(quit()));
     ssock->moveToThread(sthread);
     sthread->start();
     usock=NULL;
@@ -128,18 +130,24 @@ void Tap::UdpRecv(const QHostAddress &Host,unsigned short Port,const QByteArray 
 }
 
 void Tap::EndSession() {
-    emit csock->Disconnect();
-    cthread->exit();
-    cthread->wait();
-    csock->deleteLater();
-    emit ssock->Disconnect();
-    sthread->exit();
-    sthread->wait();
-    ssock->deleteLater();
+    if (csock) {
+        emit csock->Disconnect();
+        cthread->wait();
+        csock->deleteLater();
+        csock=NULL;
+    }
+    if (ssock) {
+        emit ssock->Disconnect();
+        sthread->wait();
+        ssock->deleteLater();
+        ssock=NULL;
+    }
     if (usock) {
+        emit usock->Disconnect();
         uthread->exit();
         uthread->wait();
         usock->deleteLater();
+        usock=NULL;
     }
     deleteLater();
 }

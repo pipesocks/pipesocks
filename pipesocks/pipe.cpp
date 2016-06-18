@@ -24,6 +24,7 @@ Pipe::Pipe(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,QO
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     csock->setSocketDescriptor(handle);
     cthread=new QThread(csock);
+    connect(csock,SIGNAL(disconnected()),cthread,SLOT(quit()));
     csock->moveToThread(cthread);
     cthread->start();
     ssock=new TcpSocket;
@@ -31,6 +32,7 @@ Pipe::Pipe(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,QO
     connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     ssock->connectToHost(RemoteHost,RemotePort);
     sthread=new QThread(ssock);
+    connect(ssock,SIGNAL(disconnected()),sthread,SLOT(quit()));
     ssock->moveToThread(sthread);
     sthread->start();
     printf("[%s] New connection from %s:%d\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data(),csock->peerAddress().toString().toLocal8Bit().data(),csock->peerPort());
@@ -45,13 +47,17 @@ void Pipe::ServerRecv(const QByteArray &Data) {
 }
 
 void Pipe::EndSession() {
-    emit csock->Disconnect();
-    cthread->exit();
-    cthread->wait();
-    csock->deleteLater();
-    emit ssock->Disconnect();
-    sthread->exit();
-    sthread->wait();
-    ssock->deleteLater();
+    if (csock) {
+        emit csock->Disconnect();
+        cthread->wait();
+        csock->deleteLater();
+        csock=NULL;
+    }
+    if (ssock) {
+        emit ssock->Disconnect();
+        sthread->wait();
+        ssock->deleteLater();
+        ssock=NULL;
+    }
     deleteLater();
 }
