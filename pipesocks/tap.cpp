@@ -102,7 +102,8 @@ void Tap::ClientRecv(const QByteArray &Data) {
                 uthread=new QThread(usock);
                 usock->moveToThread(uthread);
                 uthread->start();
-                emit csock->SendData(QByteArray::fromHex("05000001"));//
+                emit csock->SendData(QByteArray::fromHex("05070001000000000000"));//
+                emit csock->Disconnect();
                 status=UDPASSOCIATE;
             }
             break;
