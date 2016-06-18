@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MAINWIDGET_H
 
 #include <QWidget>
+#include <QMessageBox>
+#include "tcpserver.h"
 
 namespace Ui {
     class MainWidget;
@@ -32,6 +34,10 @@ public:
     ~MainWidget();
 private:
     Ui::MainWidget *ui;
+private slots:
+    void PACSelected();
+    void OtherSelected();
+    void StartClicked();
 };
 
 #endif // MAINWIDGET_H

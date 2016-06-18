@@ -16,4 +16,3 @@ Or
 
 ### Things remaining to be done
 - Finish UDP
-- Finish GUI
