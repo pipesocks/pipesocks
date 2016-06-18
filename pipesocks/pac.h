@@ -21,6 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 #include <QThread>
+#include <QDateTime>
+#include <QHostAddress>
+#include <QFile>
+#include <QTextStream>
 #include "tcpsocket.h"
 
 class PAC : public QObject {
@@ -31,7 +35,7 @@ private:
     TcpSocket *csock;
     QThread *cthread;
 private slots:
-    void RecvData(const QByteArray &Data);
+    void RecvData(const QByteArray&);
     void EndSession();
 };
 

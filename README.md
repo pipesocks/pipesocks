@@ -16,5 +16,4 @@ Or
 
 ### Things remaining to be done
 - Finish UDP
-- Finish PAC
 - Finish GUI
