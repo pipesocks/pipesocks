@@ -74,7 +74,8 @@ void MainWidget::StartClicked() {
     }
     if (!server->listen(QHostAddress::Any,ui->LocalPort->text().toUInt())) {
         QMessageBox::critical(this,"Error",QString("Failed to bind to port %1").arg(ui->LocalPort->text().toUInt()));
-        QApplication::exit();
+        server->deleteLater();
+        return;
     }
     ui->Start->setEnabled(false);
 }
