@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SECURESOCKET_H
 
 #include <QCoreApplication>
+#include <QByteArrayList>
 #include <sodium.h>
 #include "tcpsocket.h"
 
