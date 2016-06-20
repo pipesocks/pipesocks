@@ -70,6 +70,11 @@ void MainWidget::StartClicked() {
             QMessageBox::critical(this,"Error","Some blanks must be filled.");
             return;
         }
+        QFile file("proxy.pac");
+        if (!file.exists()) {
+            QMessageBox::critical(this,"Error","proxy.pac not exist.");
+            return;
+        }
         server=new TcpServer(TcpServer::PACServer,ui->RemoteHost->text(),ui->RemotePort->text().toUInt(),ui->LocalHost->text(),ui->Password->text(),this);
     }
     if (!server->listen(QHostAddress::Any,ui->LocalPort->text().toUInt())) {

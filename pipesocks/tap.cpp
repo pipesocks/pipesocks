@@ -68,7 +68,7 @@ void Tap::ClientRecv(const QByteArray &Data) {
             status=Handshook;
             break;
         case Handshook:
-            if (Data[0]!=5||Data[1]==2||Data[2]!=0||Data[3]==4) {
+            if (Data[0]!=5||Data[1]==2||Data[2]!=0) {
                 emit csock->SendData(QByteArray::fromHex("05070001000000000000"));
                 emit csock->Disconnect();
                 return;
@@ -86,6 +86,24 @@ void Tap::ClientRecv(const QByteArray &Data) {
                         .arg((unsigned char)Data[7]);
             } else if (Data[3]==3) {
                 host=Data.mid(5,Data[4]);
+            } else if (Data[3]==4) {
+                host=QString("%1%2:%3%4:%5%6:%7%8:%9%10:%11%12:%13%14:%15%16")
+                        .arg((unsigned char)Data[4],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[5],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[6],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[7],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[8],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[9],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[10],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[11],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[12],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[13],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[14],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[15],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[16],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[17],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[18],2,16,QLatin1Char('0'))
+                        .arg((unsigned char)Data[19],2,16,QLatin1Char('0'));
             }
             qvm.insert("host",host);
             port=((unsigned char)Data[Data.length()-2]<<8)+(unsigned char)Data[Data.length()-1];
@@ -103,7 +121,7 @@ void Tap::ClientRecv(const QByteArray &Data) {
                 usock->moveToThread(uthread);
                 uthread->start();
                 emit csock->SendData(QByteArray::fromHex("05070001000000000000"));//
-                emit csock->Disconnect();
+                emit csock->Disconnect();//
                 status=UDPASSOCIATE;
             }
             break;
@@ -111,6 +129,7 @@ void Tap::ClientRecv(const QByteArray &Data) {
             emit ssock->SendData(Data);
             break;
         case UDPASSOCIATE:
+            emit csock->Disconnect();
             break;
     }
 }
