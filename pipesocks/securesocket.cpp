@@ -45,7 +45,7 @@ void SecureSocket::RecvDataSlot() {
         RecvBuffer=RecvBuffer.mid(index+1);
         if (RemotePubKey.size()==0) {
             RemotePubKey=segment;
-            for (QByteArrayList::iterator it=SendBuffer.begin();it!=SendBuffer.end();++it)
+            for (QList<QByteArray>::iterator it=SendBuffer.begin();it!=SendBuffer.end();++it)
                 write(Encrypt(it.i->t()).toBase64()+char(23));
             SendBuffer.clear();
         } else {
