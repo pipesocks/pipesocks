@@ -151,18 +151,21 @@ void Tap::UdpRecv(const QHostAddress &Host,unsigned short Port,const QByteArray 
 
 void Tap::EndSession() {
     if (csock) {
+        disconnect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
         emit csock->Disconnect();
         cthread->wait();
         csock->deleteLater();
         csock=NULL;
     }
     if (ssock) {
+        disconnect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
         emit ssock->Disconnect();
         sthread->wait();
         ssock->deleteLater();
         ssock=NULL;
     }
     if (usock) {
+        disconnect(usock,SIGNAL(RecvData(QHostAddress,unsigned short,QByteArray)),this,SLOT(UdpRecv(QHostAddress,unsigned short,QByteArray)));
         emit usock->Disconnect();
         uthread->exit();
         uthread->wait();

@@ -48,12 +48,14 @@ void Pipe::ServerRecv(const QByteArray &Data) {
 
 void Pipe::EndSession() {
     if (csock) {
+        disconnect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
         emit csock->Disconnect();
         cthread->wait();
         csock->deleteLater();
         csock=NULL;
     }
     if (ssock) {
+        disconnect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
         emit ssock->Disconnect();
         sthread->wait();
         ssock->deleteLater();
