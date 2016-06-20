@@ -71,9 +71,9 @@ void Pump::ClientRecv(const QByteArray &Data) {
                     emit csock->Disconnect();
                     return;
                 }
-                emit usock->SendData(host.addresses().front(),qvm["port"].toUInt(),qvm["Data"].toByteArray());
+                emit usock->SendData(host.addresses().front(),qvm["port"].toUInt(),qvm["data"].toByteArray());
             }
-            emit usock->SendData(QHostAddress(qvm["host"].toString()),qvm["port"].toUInt(),qvm["Data"].toByteArray());
+            emit usock->SendData(QHostAddress(qvm["host"].toString()),qvm["port"].toUInt(),qvm["data"].toByteArray());
             break;
     }
 }
