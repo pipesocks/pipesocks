@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SECURESOCKET_H
 
 #include <QCoreApplication>
-#include <QByteArrayList>
+#include <QList>
 #include <sodium.h>
 #include "tcpsocket.h"
 
@@ -30,7 +30,7 @@ public:
     explicit SecureSocket(QObject *parent = 0);
 private:
     QByteArray LocalPubKey,LocalPriKey,RemotePubKey;
-    QByteArrayList SendBuffer;
+    QList<QByteArray>SendBuffer;
     QByteArray RecvBuffer;
     QByteArray Encrypt(const QByteArray &Data);
     QByteArray Decrypt(const QByteArray &Data);
