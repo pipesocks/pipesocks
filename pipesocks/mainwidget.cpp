@@ -22,6 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 MainWidget::MainWidget(QWidget *parent):QWidget(parent),ui(new Ui::MainWidget) {
     ui->setupUi(this);
     ui->RemoteHost->setFocus();
+    connect(ui->Pump,SIGNAL(clicked(bool)),this,SLOT(PumpSelected()));
+    connect(ui->Pipe,SIGNAL(clicked(bool)),this,SLOT(PipeSelected()));
+    connect(ui->Tap,SIGNAL(clicked(bool)),this,SLOT(TapSelected()));
     connect(ui->PAC,SIGNAL(clicked(bool)),this,SLOT(PACSelected()));
     connect(ui->Pump,SIGNAL(clicked(bool)),this,SLOT(OtherSelected()));
     connect(ui->Pipe,SIGNAL(clicked(bool)),this,SLOT(OtherSelected()));
@@ -33,7 +36,36 @@ MainWidget::~MainWidget() {
     delete ui;
 }
 
+void MainWidget::PumpSelected() {
+    ui->RemoteHost->setEnabled(false);
+    ui->RemotePort->setEnabled(false);
+    ui->LocalHost->setEnabled(false);
+    ui->LocalPort->setEnabled(true);
+    ui->Password->setEnabled(true);
+}
+
+void MainWidget::PipeSelected() {
+    ui->RemoteHost->setEnabled(true);
+    ui->RemotePort->setEnabled(true);
+    ui->LocalHost->setEnabled(false);
+    ui->LocalPort->setEnabled(true);
+    ui->Password->setEnabled(false);
+}
+
+void MainWidget::TapSelected() {
+    ui->RemoteHost->setEnabled(true);
+    ui->RemotePort->setEnabled(true);
+    ui->LocalHost->setEnabled(true);
+    ui->LocalPort->setEnabled(true);
+    ui->Password->setEnabled(true);
+}
+
 void MainWidget::PACSelected() {
+    ui->RemoteHost->setEnabled(false);
+    ui->RemotePort->setEnabled(false);
+    ui->LocalHost->setEnabled(false);
+    ui->LocalPort->setEnabled(true);
+    ui->Password->setEnabled(false);
     if (ui->LocalPort->text()=="1080") {
         ui->LocalPort->setText("80");
     }

@@ -35,6 +35,9 @@ public:
 private:
     Ui::MainWidget *ui;
 private slots:
+    void PumpSelected();
+    void PipeSelected();
+    void TapSelected();
     void PACSelected();
     void OtherSelected();
     void StartClicked();
