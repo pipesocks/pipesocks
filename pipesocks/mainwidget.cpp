@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 MainWidget::MainWidget(QWidget *parent):QWidget(parent),ui(new Ui::MainWidget) {
     ui->setupUi(this);
+    server=NULL;
     ui->RemoteHost->setFocus();
     connect(ui->Pump,SIGNAL(clicked(bool)),this,SLOT(PumpSelected()));
     connect(ui->Pipe,SIGNAL(clicked(bool)),this,SLOT(PipeSelected()));
@@ -78,7 +79,6 @@ void MainWidget::OtherSelected() {
 }
 
 void MainWidget::StartClicked() {
-    TcpServer *server;
     if (ui->Pump->isChecked()) {
         if (ui->LocalPort->text()=="") {
             QMessageBox::critical(this,"Error","Some blanks must be filled.");
@@ -112,7 +112,24 @@ void MainWidget::StartClicked() {
     if (!server->listen(QHostAddress::Any,ui->LocalPort->text().toUInt())) {
         QMessageBox::critical(this,"Error",QString("Failed to bind to port %1").arg(ui->LocalPort->text().toUInt()));
         server->deleteLater();
+        server=NULL;
         return;
     }
+    ui->Pump->setEnabled(false);
+    ui->Pipe->setEnabled(false);
+    ui->Tap->setEnabled(false);
+    ui->PAC->setEnabled(false);
+    ui->RemoteHost->setEnabled(false);
+    ui->RemotePort->setEnabled(false);
+    ui->LocalHost->setEnabled(false);
+    ui->LocalPort->setEnabled(false);
+    ui->Password->setEnabled(false);
     ui->Start->setEnabled(false);
+}
+
+void MainWidget::closeEvent(QCloseEvent*) {
+    if (server) {
+        server->close();
+        server->deleteLater();
+    }
 }

@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QWidget>
 #include <QMessageBox>
+#include <QCloseEvent>
 #include "tcpserver.h"
 
 namespace Ui {
@@ -34,6 +35,7 @@ public:
     ~MainWidget();
 private:
     Ui::MainWidget *ui;
+    TcpServer *server;
 private slots:
     void PumpSelected();
     void PipeSelected();
@@ -41,6 +43,8 @@ private slots:
     void PACSelected();
     void OtherSelected();
     void StartClicked();
+protected:
+    void closeEvent(QCloseEvent*);
 };
 
 #endif // MAINWIDGET_H
