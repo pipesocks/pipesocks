@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "pac.h"
 
-PAC::PAC(qintptr handle,QObject *parent):QObject(parent) {
+PAC::PAC(qintptr handle,unsigned short Port,QObject *parent):QObject(parent),Port(Port) {
     csock=new TcpSocket;
     connect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(RecvData(QByteArray)));
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
@@ -27,17 +27,10 @@ PAC::PAC(qintptr handle,QObject *parent):QObject(parent) {
     connect(csock,SIGNAL(disconnected()),cthread,SLOT(quit()));
     csock->moveToThread(cthread);
     cthread->start();
-    printf("[%s] New connection from %s:%d\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data(),csock->peerAddress().toString().toLocal8Bit().data(),csock->peerPort());
 }
 
 void PAC::RecvData(const QByteArray&) {
-    QFile pacfile("proxy.pac");
-    if (!pacfile.open(QIODevice::Text|QIODevice::ReadOnly)) {
-        printf("[%s] proxy.pac not readable\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data());
-        return;
-    }
-    QTextStream qts(&pacfile);
-    QString pac(qts.readAll());
+    QString pac=QString("function FindProxyForURL(url,host){var server=\"127.0.0.1:%1\";return \"SOCKS5 \"+server+\";SOCKS \"+server+\";DIRECT\";}").arg(Port);
     emit csock->SendData(QString("HTTP/1.1 200 OK\r\nContent-Type: application/x-ns-proxy-autoconfig\r\nConnection: close\r\nContent-Length: %1\r\n\r\n%2").arg(pac.length()).arg(pac).toLocal8Bit());
     emit csock->Disconnect();
 }
