@@ -25,7 +25,7 @@ Since most Ubuntu servers doesn't hold a GUI, here is the way to deploy pipesock
 
 Type these commands in your terminal: 
 
-```
+```bash
 sudo apt-get -y install git make build-essential qt5-default qt5-qmake
 git clone https://github.com/jedisct1/libsodium.git
 git clone https://github.com/yvbbrjdr/pipesocks.git
