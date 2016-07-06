@@ -19,22 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "pipe.h"
 
 Pipe::Pipe(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,QObject *parent):QObject(parent) {
-    csock=new TcpSocket;
+    csock=new TcpSocket(this);
     connect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     csock->setSocketDescriptor(handle);
-    cthread=new QThread(csock);
-    connect(csock,SIGNAL(disconnected()),cthread,SLOT(quit()));
-    csock->moveToThread(cthread);
-    cthread->start();
-    ssock=new TcpSocket;
+    ssock=new TcpSocket(this);
     connect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
     connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     ssock->connectToHost(RemoteHost,RemotePort);
-    sthread=new QThread(ssock);
-    connect(ssock,SIGNAL(disconnected()),sthread,SLOT(quit()));
-    ssock->moveToThread(sthread);
-    sthread->start();
     printf("[%s] New connection from %s:%d\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data(),csock->peerAddress().toString().toLocal8Bit().data(),csock->peerPort());
 }
 
@@ -51,17 +43,7 @@ void Pipe::EndSession() {
     disconnect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     disconnect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
     disconnect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
-    if (csock) {
-        emit csock->Disconnect();
-        cthread->wait();
-        csock->deleteLater();
-        csock=NULL;
-    }
-    if (ssock) {
-        emit ssock->Disconnect();
-        sthread->wait();
-        ssock->deleteLater();
-        ssock=NULL;
-    }
+    csock->disconnectFromHost();
+    ssock->disconnectFromHost();
     deleteLater();
 }

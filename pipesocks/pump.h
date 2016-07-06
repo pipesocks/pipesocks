@@ -20,14 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PUMP_H
 
 #include <QObject>
-#include <QThread>
 #include <QJsonDocument>
 #include <QVariantMap>
 #include <QDateTime>
 #include <QHostInfo>
 #include "securesocket.h"
 #include "tcpsocket.h"
-#include "udpsocket.h"
 
 class Pump : public QObject {
     Q_OBJECT
@@ -36,19 +34,15 @@ public:
 private:
     enum Status {
         Initiated,
-        TCP,
-        UDP
+        Connected
     };
     QString Password;
     Status status;
     SecureSocket *csock;
     TcpSocket *ssock;
-    UdpSocket *usock;
-    QThread *cthread,*sthread,*uthread;
 private slots:
     void ClientRecv(const QByteArray &Data);
     void ServerRecv(const QByteArray &Data);
-    void UdpRecv(const QHostAddress &Host,unsigned short Port,const QByteArray &Data);
     void EndSession();
 };
 
