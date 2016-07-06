@@ -34,12 +34,11 @@ public:
         TapClient,
         PACServer
     };
-    explicit TcpServer(Mode mode,const QString &RemoteHost,unsigned short RemotePort,const QString &LocalHost,const QString &Password,QObject *parent = 0);
+    explicit TcpServer(Mode mode,const QString &RemoteHost,unsigned short RemotePort,const QString &Password,QObject *parent = 0);
 private:
     Mode mode;
     QString RemoteHost;
     unsigned short RemotePort;
-    QString LocalHost;
     QString Password;
 protected:
     void incomingConnection(qintptr handle);

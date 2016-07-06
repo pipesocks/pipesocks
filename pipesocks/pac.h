@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PAC_H
 
 #include <QObject>
-#include <QThread>
 #include <QDateTime>
 #include <QHostAddress>
 #include <QFile>
@@ -33,10 +32,8 @@ public:
     explicit PAC(qintptr handle,QObject *parent = 0);
 private:
     TcpSocket *csock;
-    QThread *cthread;
 private slots:
     void RecvData(const QByteArray&);
-    void EndSession();
 };
 
 #endif // PAC_H

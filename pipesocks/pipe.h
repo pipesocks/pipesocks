@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PIPE_H
 
 #include <QObject>
-#include <QThread>
 #include <QDateTime>
 #include <QHostAddress>
 #include "tcpsocket.h"
@@ -31,7 +30,6 @@ public:
     explicit Pipe(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,QObject *parent = 0);
 private:
     TcpSocket *csock,*ssock;
-    QThread *cthread,*sthread;
 private slots:
     void ClientRecv(const QByteArray &Data);
     void ServerRecv(const QByteArray &Data);

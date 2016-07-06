@@ -19,18 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "pump.h"
 
 Pump::Pump(qintptr handle,const QString &Password,QObject *parent):QObject(parent),Password(Password) {
-    csock=new SecureSocket;
+    csock=new SecureSocket(this);
     connect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     csock->setSocketDescriptor(handle);
-    cthread=new QThread(csock);
-    connect(csock,SIGNAL(disconnected()),cthread,SLOT(quit()));
-    csock->moveToThread(cthread);
-    cthread->start();
     ssock=NULL;
-    sthread=NULL;
-    usock=NULL;
-    uthread=NULL;
     status=Initiated;
     printf("[%s] New connection from %s:%d\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data(),csock->peerAddress().toString().toLocal8Bit().data(),csock->peerPort());
 }
@@ -40,40 +33,16 @@ void Pump::ClientRecv(const QByteArray &Data) {
     switch (status) {
         case Initiated:
             if (qvm["password"]!=Password) {
-                emit csock->Disconnect();
+                csock->disconnectFromHost();
             }
-            if (qvm["protocol"]=="tcp") {
-                ssock=new TcpSocket;
-                connect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
-                connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
-                ssock->connectToHost(qvm["host"].toString(),qvm["port"].toUInt());
-                sthread=new QThread(ssock);
-                connect(csock,SIGNAL(disconnected()),sthread,SLOT(quit()));
-                ssock->moveToThread(sthread);
-                sthread->start();
-                status=TCP;
-            } else if (qvm["protocol"]=="udp") {
-                usock=new UdpSocket;
-                connect(usock,SIGNAL(RecvData(QHostAddress,unsigned short,QByteArray)),this,SLOT(UdpRecv(QHostAddress,unsigned short,QByteArray)));
-                uthread=new QThread(usock);
-                usock->moveToThread(uthread);
-                uthread->start();
-                status=UDP;
-            }
+            ssock=new TcpSocket(this);
+            connect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
+            connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
+            ssock->connectToHost(qvm["host"].toString(),qvm["port"].toUInt());
+            status=Connected;
             break;
-        case TCP:
+        case Connected:
             emit ssock->SendData(Data);
-            break;
-        case UDP:
-            if (!qvm["host"].toString()[0].isNumber()) {
-                QHostInfo host(QHostInfo::fromName(qvm["host"].toString()));
-                if (host.addresses().empty()) {
-                    emit csock->Disconnect();
-                    return;
-                }
-                emit usock->SendData(host.addresses().front(),qvm["port"].toUInt(),qvm["data"].toByteArray());
-            }
-            emit usock->SendData(QHostAddress(qvm["host"].toString()),qvm["port"].toUInt(),qvm["data"].toByteArray());
             break;
     }
 }
@@ -82,38 +51,14 @@ void Pump::ServerRecv(const QByteArray &Data) {
     emit csock->SendData(Data);
 }
 
-void Pump::UdpRecv(const QHostAddress &Host,unsigned short Port,const QByteArray &Data) {
-    QVariantMap qvm;
-    qvm.insert("host",Host.toString());
-    qvm.insert("port",Port);
-    qvm.insert("data",Data);
-    emit csock->SendData(QJsonDocument::fromVariant(qvm).toJson());
-}
-
 void Pump::EndSession() {
+    if (ssock) {
+        disconnect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
+        disconnect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
+        ssock->disconnectFromHost();
+    }
     disconnect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
     disconnect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
-    disconnect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
-    disconnect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
-    disconnect(usock,SIGNAL(RecvData(QHostAddress,unsigned short,QByteArray)),this,SLOT(UdpRecv(QHostAddress,unsigned short,QByteArray)));
-    if (csock) {
-        emit csock->Disconnect();
-        cthread->wait();
-        csock->deleteLater();
-        csock=NULL;
-    }
-    if (ssock) {
-        emit ssock->Disconnect();
-        sthread->wait();
-        ssock->deleteLater();
-        ssock=NULL;
-    }
-    if (usock) {
-        emit usock->Disconnect();
-        uthread->exit();
-        uthread->wait();
-        usock->deleteLater();
-        usock=NULL;
-    }
+    csock->disconnectFromHost();
     deleteLater();
 }

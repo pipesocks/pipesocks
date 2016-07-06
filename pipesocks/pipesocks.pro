@@ -10,7 +10,6 @@ SOURCES += main.cpp \
     tcpsocket.cpp \
     securesocket.cpp \
     tcpserver.cpp \
-    udpsocket.cpp \
     pipe.cpp \
     tap.cpp \
     pump.cpp \
@@ -20,7 +19,6 @@ SOURCES += main.cpp \
 HEADERS += tcpsocket.h \
     securesocket.h \
     tcpserver.h \
-    udpsocket.h \
     pipe.h \
     tap.h \
     pump.h \

@@ -40,7 +40,6 @@ MainWidget::~MainWidget() {
 void MainWidget::PumpSelected() {
     ui->RemoteHost->setEnabled(false);
     ui->RemotePort->setEnabled(false);
-    ui->LocalHost->setEnabled(false);
     ui->LocalPort->setEnabled(true);
     ui->Password->setEnabled(true);
 }
@@ -48,7 +47,6 @@ void MainWidget::PumpSelected() {
 void MainWidget::PipeSelected() {
     ui->RemoteHost->setEnabled(true);
     ui->RemotePort->setEnabled(true);
-    ui->LocalHost->setEnabled(false);
     ui->LocalPort->setEnabled(true);
     ui->Password->setEnabled(false);
 }
@@ -56,7 +54,6 @@ void MainWidget::PipeSelected() {
 void MainWidget::TapSelected() {
     ui->RemoteHost->setEnabled(true);
     ui->RemotePort->setEnabled(true);
-    ui->LocalHost->setEnabled(true);
     ui->LocalPort->setEnabled(true);
     ui->Password->setEnabled(true);
 }
@@ -64,7 +61,6 @@ void MainWidget::TapSelected() {
 void MainWidget::PACSelected() {
     ui->RemoteHost->setEnabled(false);
     ui->RemotePort->setEnabled(false);
-    ui->LocalHost->setEnabled(false);
     ui->LocalPort->setEnabled(true);
     ui->Password->setEnabled(false);
     if (ui->LocalPort->text()=="1080") {
@@ -84,19 +80,19 @@ void MainWidget::StartClicked() {
             QMessageBox::critical(this,"Error","Some blanks must be filled.");
             return;
         }
-        server=new TcpServer(TcpServer::PumpServer,ui->RemoteHost->text(),ui->RemotePort->text().toUInt(),ui->LocalHost->text(),ui->Password->text(),this);
+        server=new TcpServer(TcpServer::PumpServer,ui->RemoteHost->text(),ui->RemotePort->text().toUInt(),ui->Password->text(),this);
     } else if (ui->Pipe->isChecked()) {
         if (ui->RemoteHost->text()==""||ui->RemotePort->text()==""||ui->LocalPort->text()=="") {
             QMessageBox::critical(this,"Error","Some blanks must be filled.");
             return;
         }
-        server=new TcpServer(TcpServer::PipeServer,ui->RemoteHost->text(),ui->RemotePort->text().toUInt(),ui->LocalHost->text(),ui->Password->text(),this);
+        server=new TcpServer(TcpServer::PipeServer,ui->RemoteHost->text(),ui->RemotePort->text().toUInt(),ui->Password->text(),this);
     } else if (ui->Tap->isChecked()) {
-        if (ui->RemoteHost->text()==""||ui->RemotePort->text()==""||ui->LocalHost->text()==""||ui->LocalPort->text()=="") {
+        if (ui->RemoteHost->text()==""||ui->RemotePort->text()==""||ui->LocalPort->text()=="") {
             QMessageBox::critical(this,"Error","Some blanks must be filled.");
             return;
         }
-        server=new TcpServer(TcpServer::TapClient,ui->RemoteHost->text(),ui->RemotePort->text().toUInt(),ui->LocalHost->text(),ui->Password->text(),this);
+        server=new TcpServer(TcpServer::TapClient,ui->RemoteHost->text(),ui->RemotePort->text().toUInt(),ui->Password->text(),this);
     } else if (ui->PAC->isChecked()) {
         if (ui->LocalPort->text()=="") {
             QMessageBox::critical(this,"Error","Some blanks must be filled.");
@@ -107,7 +103,7 @@ void MainWidget::StartClicked() {
             QMessageBox::critical(this,"Error","proxy.pac not exist.");
             return;
         }
-        server=new TcpServer(TcpServer::PACServer,ui->RemoteHost->text(),ui->RemotePort->text().toUInt(),ui->LocalHost->text(),ui->Password->text(),this);
+        server=new TcpServer(TcpServer::PACServer,ui->RemoteHost->text(),ui->RemotePort->text().toUInt(),ui->Password->text(),this);
     }
     if (!server->listen(QHostAddress::Any,ui->LocalPort->text().toUInt())) {
         QMessageBox::critical(this,"Error",QString("Failed to bind to port %1").arg(ui->LocalPort->text().toUInt()));
@@ -121,7 +117,6 @@ void MainWidget::StartClicked() {
     ui->PAC->setEnabled(false);
     ui->RemoteHost->setEnabled(false);
     ui->RemotePort->setEnabled(false);
-    ui->LocalHost->setEnabled(false);
     ui->LocalPort->setEnabled(false);
     ui->Password->setEnabled(false);
     ui->Start->setEnabled(false);
