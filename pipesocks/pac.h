@@ -34,6 +34,7 @@ private:
     TcpSocket *csock;
 private slots:
     void RecvData(const QByteArray&);
+    void EndSession();
 };
 
 #endif // PAC_H
