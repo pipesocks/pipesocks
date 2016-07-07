@@ -50,7 +50,7 @@ brew install libsodium
 ```
 
 ### Windows
-If you don't want to compile libsodium yourself, you can download the recompiled library right [here](https://download.libsodium.org/libsodium/releases/). 
+If you don't want to compile libsodium yourself, you can download the precompiled library right [here](https://download.libsodium.org/libsodium/releases/). 
 
 ## Dependencies
 [Qt](http://www.qt.io/)
