@@ -41,6 +41,17 @@ qmake && make
 
 And you'll start a pipesocks pump server. 
 
+### OS X
+To install libsodium, you can type these commands in your terminal: 
+
+```bash
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
+brew install libsodium
+```
+
+### Windows
+If you don't want to compile libsodium yourself, you can download the recompiled library right [here](https://download.libsodium.org/libsodium/releases/). 
+
 ## Dependencies
 [Qt](http://www.qt.io/)
 
