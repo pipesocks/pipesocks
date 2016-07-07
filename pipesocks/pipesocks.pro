@@ -25,6 +25,11 @@ HEADERS += tcpsocket.h \
     pac.h \
     mainwidget.h
 
+osx {
+    LIBS += -L/usr/local/lib/
+    INCLUDEPATH += /usr/local/include/
+}
+
 LIBS += -lsodium
 
 DISTFILES += proxy.pac
