@@ -33,3 +33,6 @@ build-*
 #QtCtreator Qml
 *.qmlproject.user
 *.qmlproject.user.*
+
+# OS X Auto File
+.DS_Store
