@@ -52,13 +52,11 @@ void Pump::ServerRecv(const QByteArray &Data) {
 }
 
 void Pump::EndSession() {
+    disconnect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     if (ssock) {
-        disconnect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
         disconnect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
         ssock->disconnectFromHost();
     }
-    disconnect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
-    disconnect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     csock->disconnectFromHost();
     deleteLater();
 }

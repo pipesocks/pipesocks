@@ -39,6 +39,7 @@ void PAC::RecvData(const QByteArray&) {
 
 void PAC::EndSession() {
     if (csock->bytesToWrite()==0) {
+        disconnect(csock,SIGNAL(bytesWritten(qint64)),this,SLOT(EndSession()));
         csock->disconnectFromHost();
         deleteLater();
     }

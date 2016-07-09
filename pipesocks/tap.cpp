@@ -108,9 +108,7 @@ void Tap::ServerRecv(const QByteArray &Data) {
 }
 
 void Tap::EndSession() {
-    disconnect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
     disconnect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
-    disconnect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
     disconnect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     csock->disconnectFromHost();
     ssock->disconnectFromHost();

@@ -31,6 +31,8 @@ void SecureSocket::StateChangedSlot(QAbstractSocket::SocketState state) {
 }
 
 void SecureSocket::SendDataSlot(const QByteArray &Data) {
+    if (state==UnconnectedState||state()==ClosingState)
+        return;
     if (RemotePubKey.size()==0)
         SendBuffer.push_back(Data);
     else
