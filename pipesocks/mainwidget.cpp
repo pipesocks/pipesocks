@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 MainWidget::MainWidget(QWidget *parent):QWidget(parent),ui(new Ui::MainWidget) {
     ui->setupUi(this);
+    setWindowOpacity(0.8);
     server=NULL;
     ui->RemoteHost->setFocus();
     connect(ui->Pump,SIGNAL(clicked(bool)),this,SLOT(PumpSelected()));
