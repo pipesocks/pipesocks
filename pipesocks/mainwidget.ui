@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>249</width>
-    <height>194</height>
+    <height>196</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,10 +51,27 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="RHLabel">
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="Password">
+       <property name="echoMode">
+        <enum>QLineEdit::Password</enum>
+       </property>
+       <property name="placeholderText">
+        <string>Optional</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="LocalPort">
        <property name="text">
-        <string>Remote Host: </string>
+        <string>1080</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="PLabel">
+       <property name="text">
+        <string>Password: </string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -95,44 +112,38 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="LocalPort">
+     <item row="0" column="0">
+      <widget class="QLabel" name="RHLabel">
        <property name="text">
-        <string>1080</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="PLabel">
-       <property name="text">
-        <string>Password: </string>
+        <string>Remote Host: </string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="Password">
-       <property name="echoMode">
-        <enum>QLineEdit::Password</enum>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="Start">
+       <property name="text">
+        <string>Start</string>
        </property>
-       <property name="placeholderText">
-        <string>Optional</string>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="About">
+       <property name="text">
+        <string>About</string>
        </property>
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QPushButton" name="Start">
-     <property name="text">
-      <string>Start</string>
-     </property>
-     <property name="default">
-      <bool>true</bool>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

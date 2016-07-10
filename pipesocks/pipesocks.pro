@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     tap.cpp \
     pump.cpp \
     pac.cpp \
-    mainwidget.cpp
+    mainwidget.cpp \
+    aboutdialog.cpp
 
 HEADERS += tcpsocket.h \
     securesocket.h \
@@ -23,7 +24,8 @@ HEADERS += tcpsocket.h \
     tap.h \
     pump.h \
     pac.h \
-    mainwidget.h
+    mainwidget.h \
+    aboutdialog.h
 
 osx {
     LIBS += -L/usr/local/lib/
@@ -34,4 +36,5 @@ LIBS += -lsodium
 
 DISTFILES += proxy.pac
 
-FORMS += mainwidget.ui
+FORMS += mainwidget.ui \
+    aboutdialog.ui

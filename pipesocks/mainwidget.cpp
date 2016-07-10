@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 MainWidget::MainWidget(QWidget *parent):QWidget(parent),ui(new Ui::MainWidget) {
     ui->setupUi(this);
     setWindowOpacity(0.8);
+    about=new AboutDialog(this);
     server=NULL;
     ui->RemoteHost->setFocus();
     connect(ui->Pump,SIGNAL(clicked(bool)),this,SLOT(PumpSelected()));
@@ -32,6 +33,7 @@ MainWidget::MainWidget(QWidget *parent):QWidget(parent),ui(new Ui::MainWidget) {
     connect(ui->Pipe,SIGNAL(clicked(bool)),this,SLOT(OtherSelected()));
     connect(ui->Tap,SIGNAL(clicked(bool)),this,SLOT(OtherSelected()));
     connect(ui->Start,SIGNAL(clicked(bool)),this,SLOT(StartClicked()));
+    connect(ui->About,SIGNAL(clicked(bool)),this,SLOT(AboutClicked()));
 }
 
 MainWidget::~MainWidget() {
@@ -128,4 +130,8 @@ void MainWidget::closeEvent(QCloseEvent*) {
         server->close();
         server->deleteLater();
     }
+}
+
+void MainWidget::AboutClicked() {
+    about->show();
 }

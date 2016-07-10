@@ -16,38 +16,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MAINWIDGET_H
-#define MAINWIDGET_H
-
-#include <QWidget>
-#include <QMessageBox>
-#include <QCloseEvent>
 #include "aboutdialog.h"
-#include "tcpserver.h"
+#include "ui_aboutdialog.h"
 
-namespace Ui {
-    class MainWidget;
+AboutDialog::AboutDialog(QWidget *parent):QDialog(parent),ui(new Ui::AboutDialog) {
+    ui->setupUi(this);
+    setWindowOpacity(0.8);
+    connect(ui->pushButton,SIGNAL(clicked(bool)),this,SLOT(AboutQtClicked()));
 }
 
-class MainWidget : public QWidget {
-    Q_OBJECT
-public:
-    explicit MainWidget(QWidget *parent = 0);
-    ~MainWidget();
-private:
-    Ui::MainWidget *ui;
-    TcpServer *server;
-    AboutDialog *about;
-private slots:
-    void PumpSelected();
-    void PipeSelected();
-    void TapSelected();
-    void PACSelected();
-    void OtherSelected();
-    void StartClicked();
-    void AboutClicked();
-protected:
-    void closeEvent(QCloseEvent*);
-};
+AboutDialog::~AboutDialog() {
+    delete ui;
+}
 
-#endif // MAINWIDGET_H
+void AboutDialog::AboutQtClicked() {
+    QApplication::aboutQt();
+}
