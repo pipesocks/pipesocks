@@ -18,7 +18,7 @@ Or
 
 ## Deployment
 ### General
-Download & install Qt Creator with Qt (above 5) and libsodium. Open the project with Qt Creator, set include path and link path and compile. 
+Download & install Qt Creator with Qt (above 5) and libsodium. Open the project with Qt Creator, set include path and link path and compile. Then, copy the file "proxy.pac" to the binary directory or create "proxy.pac" yourself if you are an expert:) (You don't have to do it under Mac OS X because pipesocks does not support the function under this operating system)
 
 ### Ubuntu Server
 Since most Ubuntu servers doesn't hold a GUI, here is the way to deploy pipesocks in them. 
