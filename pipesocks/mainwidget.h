@@ -38,6 +38,8 @@ private:
     Ui::MainWidget *ui;
     TcpServer *server;
     AboutDialog *about;
+    bool dragging;
+    QPoint oripos;
 private slots:
     void PumpSelected();
     void PipeSelected();
@@ -48,6 +50,9 @@ private slots:
     void AboutClicked();
 protected:
     void closeEvent(QCloseEvent*);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent*);
 };
 
 #endif // MAINWIDGET_H

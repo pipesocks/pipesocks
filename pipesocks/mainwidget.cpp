@@ -24,6 +24,7 @@ MainWidget::MainWidget(QWidget *parent):QWidget(parent),ui(new Ui::MainWidget) {
     setWindowOpacity(0.8);
     about=new AboutDialog(this);
     server=NULL;
+    dragging=false;
     ui->RemoteHost->setFocus();
     connect(ui->Pump,SIGNAL(clicked(bool)),this,SLOT(PumpSelected()));
     connect(ui->Pipe,SIGNAL(clicked(bool)),this,SLOT(PipeSelected()));
@@ -136,4 +137,18 @@ void MainWidget::closeEvent(QCloseEvent*) {
 
 void MainWidget::AboutClicked() {
     about->show();
+}
+
+void MainWidget::mousePressEvent(QMouseEvent *event) {
+    dragging=true;
+    oripos=event->pos();
+}
+
+void MainWidget::mouseMoveEvent(QMouseEvent *event) {
+    if (dragging)
+        move(pos()+event->pos()-oripos);
+}
+
+void MainWidget::mouseReleaseEvent(QMouseEvent*) {
+    dragging=false;
 }

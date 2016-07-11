@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 AboutDialog::AboutDialog(QWidget *parent):QDialog(parent),ui(new Ui::AboutDialog) {
     ui->setupUi(this);
     setWindowOpacity(0.8);
+    dragging=false;
     connect(ui->pushButton,SIGNAL(clicked(bool)),this,SLOT(AboutQtClicked()));
 }
 
@@ -31,4 +32,18 @@ AboutDialog::~AboutDialog() {
 
 void AboutDialog::AboutQtClicked() {
     QApplication::aboutQt();
+}
+
+void AboutDialog::mousePressEvent(QMouseEvent *event) {
+    dragging=true;
+    oripos=event->pos();
+}
+
+void AboutDialog::mouseMoveEvent(QMouseEvent *event) {
+    if (dragging)
+        move(pos()+event->pos()-oripos);
+}
+
+void AboutDialog::mouseReleaseEvent(QMouseEvent*) {
+    dragging=false;
 }

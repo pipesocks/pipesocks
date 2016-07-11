@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ABOUTDIALOG_H
 
 #include <QDialog>
+#include <QMouseEvent>
 
 namespace Ui {
     class AboutDialog;
@@ -32,8 +33,13 @@ public:
     ~AboutDialog();
 private:
     Ui::AboutDialog *ui;
+    bool dragging;
+    QPoint oripos;
 private slots:
     void AboutQtClicked();
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent*);
 };
 
 #endif // ABOUTDIALOG_H
