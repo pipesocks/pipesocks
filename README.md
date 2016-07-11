@@ -52,6 +52,16 @@ brew install libsodium
 ### Windows
 If you don't want to compile libsodium yourself, you can download the precompiled library right [here](https://download.libsodium.org/libsodium/releases/). 
 
+## Usage
+### Graphical User Interface
+You can start pipesocks GUI by double-clicking the program icon or running it in the terminal providing no arguments. 
+
+### Command-Line Interface
+Following is the command to be typed to the terminal. 
+```
+{Binary Directory}/pipesocks <pump|pipe|tap|pac> [-H Remote Host] [-P Remote Port] [-p Local Port] [-k Password]
+```
+
 ## Dependencies
 [Qt](http://www.qt.io/)
 
