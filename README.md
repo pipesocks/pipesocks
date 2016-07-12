@@ -59,7 +59,10 @@ You can start pipesocks GUI by double-clicking the program icon or running it in
 ### Command-Line Interface
 Following is the command to be typed to the terminal. 
 ```
-{Binary Directory}/pipesocks <pump|pipe|tap|pac> [-H Remote Host] [-P Remote Port] [-p Local Port] [-k Password]
+{Binary Directory}/pipesocks pump [-p Local Port] [-k Password]
+{Binary Directory}/pipesocks pipe [-H Remote Host] [-P Remote Port] [-p Local Port]
+{Binary Directory}/pipesocks tap [-H Remote Host] [-P Remote Port] [-p Local Port] [-k Password]
+{Binary Directory}/pipesocks pac [-p Local Port]
 ```
 
 ## Dependencies
