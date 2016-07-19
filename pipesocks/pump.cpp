@@ -64,6 +64,6 @@ void Pump::EndSession() {
         csock->abort();
     else
         csock->disconnectFromHost();
-    if (ssock->state()==QAbstractSocket::UnconnectedState&&csock->state()==QAbstractSocket::UnconnectedState)
+    if (csock->state()==QAbstractSocket::UnconnectedState&&(ssock==NULL||ssock->state()==QAbstractSocket::UnconnectedState))
         deleteLater();
 }
