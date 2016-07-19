@@ -52,8 +52,9 @@ void Pump::ServerRecv(const QByteArray &Data) {
 }
 
 void Pump::EndSession() {
-    bool reset=ssock->error()!=QAbstractSocket::RemoteHostClosedError&&csock->error()!=QAbstractSocket::RemoteHostClosedError;
+    bool reset=csock->error()!=QAbstractSocket::RemoteHostClosedError;
     if (ssock) {
+        reset&=ssock->error()!=QAbstractSocket::RemoteHostClosedError;
         if (reset)
             ssock->abort();
         else
