@@ -52,11 +52,17 @@ void Pump::ServerRecv(const QByteArray &Data) {
 }
 
 void Pump::EndSession() {
-    disconnect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
+    bool reset=ssock->error()!=QAbstractSocket::RemoteHostClosedError&&csock->error()!=QAbstractSocket::RemoteHostClosedError;
     if (ssock) {
-        disconnect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
-        ssock->disconnectFromHost();
+        if (reset)
+            ssock->abort();
+        else
+            ssock->disconnectFromHost();
     }
-    csock->disconnectFromHost();
-    deleteLater();
+    if (reset)
+        csock->abort();
+    else
+        csock->disconnectFromHost();
+    if (ssock->state()==QAbstractSocket::UnconnectedState&&csock->state()==QAbstractSocket::UnconnectedState)
+        deleteLater();
 }

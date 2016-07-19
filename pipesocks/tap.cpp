@@ -108,9 +108,14 @@ void Tap::ServerRecv(const QByteArray &Data) {
 }
 
 void Tap::EndSession() {
-    disconnect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
-    disconnect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
-    csock->disconnectFromHost();
-    ssock->disconnectFromHost();
-    deleteLater();
+    bool reset=ssock->error()!=QAbstractSocket::RemoteHostClosedError&&csock->error()!=QAbstractSocket::RemoteHostClosedError;
+    if (reset) {
+        csock->abort();
+        ssock->abort();
+    } else {
+        csock->disconnectFromHost();
+        ssock->disconnectFromHost();
+    }
+    if (ssock->state()==QAbstractSocket::UnconnectedState&&csock->state()==QAbstractSocket::UnconnectedState)
+        deleteLater();
 }

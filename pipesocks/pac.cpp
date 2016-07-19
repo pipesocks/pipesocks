@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 PAC::PAC(qintptr handle,QObject *parent):QObject(parent) {
     csock=new TcpSocket(this);
     connect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(RecvData(QByteArray)));
-    connect(csock,SIGNAL(bytesWritten(qint64)),this,SLOT(EndSession()));
+    connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     csock->setSocketDescriptor(handle);
     printf("[%s] New connection from %s:%d\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data(),csock->peerAddress().toString().toLocal8Bit().data(),csock->peerPort());
 }
@@ -35,12 +35,9 @@ void PAC::RecvData(const QByteArray&) {
     QTextStream qts(&pacfile);
     QString pac(qts.readAll());
     emit csock->SendData(QString("HTTP/1.1 200 OK\r\nContent-Type: application/x-ns-proxy-autoconfig\r\nConnection: close\r\nContent-Length: %1\r\n\r\n%2").arg(pac.length()).arg(pac).toLocal8Bit());
+    csock->disconnectFromHost();
 }
 
 void PAC::EndSession() {
-    if (csock->bytesToWrite()==0) {
-        disconnect(csock,SIGNAL(bytesWritten(qint64)),this,SLOT(EndSession()));
-        csock->disconnectFromHost();
-        deleteLater();
-    }
+    deleteLater();
 }
