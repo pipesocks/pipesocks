@@ -35,8 +35,9 @@ MainWidget::MainWidget(QWidget *parent):QWidget(parent),ui(new Ui::MainWidget) {
     connect(ui->Tap,SIGNAL(clicked(bool)),this,SLOT(OtherSelected()));
     connect(ui->Start,SIGNAL(clicked(bool)),this,SLOT(StartClicked()));
     connect(ui->About,SIGNAL(clicked(bool)),this,SLOT(AboutClicked()));
-    if (QSysInfo::macVersion()!=QSysInfo::MV_None)
-        ui->PAC->setEnabled(false);
+#ifdef Q_OS_OSX
+    ui->PAC->setEnabled(false);
+#endif
 }
 
 MainWidget::~MainWidget() {
