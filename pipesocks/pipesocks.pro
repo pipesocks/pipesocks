@@ -30,7 +30,10 @@ HEADERS += tcpsocket.h \
 osx {
     LIBS += -L/usr/local/lib/
     INCLUDEPATH += /usr/local/include/
+    ICON = icons/osx.icns
 }
+
+win32: RC_ICONS = icons/win.ico
 
 LIBS += -lsodium
 
