@@ -15,7 +15,8 @@ SOURCES += main.cpp \
     pump.cpp \
     pac.cpp \
     mainwidget.cpp \
-    aboutdialog.cpp
+    aboutdialog.cpp \
+    version.cpp
 
 HEADERS += tcpsocket.h \
     securesocket.h \
@@ -25,7 +26,8 @@ HEADERS += tcpsocket.h \
     pump.h \
     pac.h \
     mainwidget.h \
-    aboutdialog.h
+    aboutdialog.h \
+    version.h
 
 osx {
     LIBS += -L/usr/local/lib/

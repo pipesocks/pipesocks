@@ -29,12 +29,16 @@ Pump::Pump(qintptr handle,const QString &Password,QObject *parent):QObject(paren
 }
 
 void Pump::ClientRecv(const QByteArray &Data) {
-    QVariantMap qvm(QJsonDocument::fromJson(Data).toVariant().toMap());
+    QVariantMap qvm(QJsonDocument::fromJson(Data).toVariant().toMap()),qvm2;
     switch (status) {
         case Initiated:
-            if (qvm["password"]!=Password) {
+            if ((!Version::CheckVersion(qvm["version"].toString()))||qvm["password"]!=Password) {
+                qvm2["status"]="refuse";
                 csock->disconnectFromHost();
+                break;
             }
+            qvm2["status"]="ok";
+            emit csock->SendData(QJsonDocument::fromVariant(qvm2).toJson());
             ssock=new TcpSocket(this);
             connect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
             connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));

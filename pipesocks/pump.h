@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHostInfo>
 #include "securesocket.h"
 #include "tcpsocket.h"
+#include "version.h"
 
 class Pump : public QObject {
     Q_OBJECT

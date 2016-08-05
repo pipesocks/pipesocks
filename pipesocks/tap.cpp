@@ -94,9 +94,8 @@ void Tap::ClientRecv(const QByteArray &Data) {
             port=((unsigned char)Data[Data.length()-2]<<8)+(unsigned char)Data[Data.length()-1];
             qvm.insert("port",port);
             qvm.insert("password",Password);
+            qvm.insert("version",Version::GetVersion());
             emit ssock->SendData(QJsonDocument::fromVariant(qvm).toJson());
-            emit csock->SendData(QByteArray::fromHex("05000001000000000000"));
-            status=CONNECT;
             break;
         case CONNECT:
             emit ssock->SendData(Data);
@@ -104,7 +103,21 @@ void Tap::ClientRecv(const QByteArray &Data) {
 }
 
 void Tap::ServerRecv(const QByteArray &Data) {
-    emit csock->SendData(Data);
+    QVariantMap qvm(QJsonDocument::fromJson(Data).toVariant().toMap());
+    switch (status) {
+        case Initiated:
+            break;
+        case Handshook:
+            if (qvm["status"]=="ok") {
+                emit csock->SendData(QByteArray::fromHex("05000001000000000000"));
+                status=CONNECT;
+            } else {
+                emit csock->SendData(QByteArray::fromHex("05020001000000000000"));
+            }
+            break;
+        case CONNECT:
+            emit csock->SendData(Data);
+    }
 }
 
 void Tap::EndSession() {

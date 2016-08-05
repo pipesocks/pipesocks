@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 AboutDialog::AboutDialog(QWidget *parent):QDialog(parent),ui(new Ui::AboutDialog) {
     ui->setupUi(this);
+    setWindowTitle(windowTitle()+' '+Version::GetVersion());
     setWindowOpacity(0.8);
     dragging=false;
     connect(ui->pushButton,SIGNAL(clicked(bool)),this,SLOT(AboutQtClicked()));

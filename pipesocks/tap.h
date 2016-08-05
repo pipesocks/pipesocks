@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHostAddress>
 #include "tcpsocket.h"
 #include "securesocket.h"
+#include "version.h"
 
 class Tap : public QObject {
     Q_OBJECT
