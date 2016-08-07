@@ -37,8 +37,12 @@ sudo cp /usr/local/lib/libsodium.so.18 /usr/lib/
 cd ../pipesocks/pipesocks/
 git checkout stable
 qmake && make
-cp pipesocks ../../
+cp pipesocks ../../libsodium/
+cp proxy.pac ../../
 cd ../../
+sudo rm -R pipesocks/
+cp libsodium/pipesocks ./
+sudo rm -R libsodium
 ```
 
 And you'll get a pipesocks binary file. 
