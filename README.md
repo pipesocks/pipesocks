@@ -42,7 +42,7 @@ cp proxy.pac ../../
 cd ../../
 sudo rm -R pipesocks/
 cp libsodium/pipesocks ./
-sudo rm -R libsodium
+sudo rm -R libsodium/
 ```
 
 And you'll get a pipesocks binary file. 
