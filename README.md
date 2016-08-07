@@ -35,11 +35,13 @@ git checkout stable
 make && sudo make install
 sudo cp /usr/local/lib/libsodium.so.18 /usr/lib/
 cd ../pipesocks/pipesocks/
+git checkout stable
 qmake && make
-./pipesocks pump
+cp pipesocks ../../
+cd ../../
 ```
 
-And you'll start a pipesocks pump server. 
+And you'll get a pipesocks binary file. 
 
 ### OS X
 To install libsodium, you can type these commands in your terminal: 
