@@ -42,6 +42,7 @@ private:
     Status status;
     TcpSocket *csock;
     SecureSocket *ssock;
+    QByteArray SOCKS5AddressPort(const QAbstractSocket *address,const QAbstractSocket *port);
 private slots:
     void ClientRecv(const QByteArray &Data);
     void ServerRecv(const QByteArray &Data);

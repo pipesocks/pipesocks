@@ -31,6 +31,28 @@ Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,cons
     printf("[%s] New connection from %s:%d\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data(),csock->peerAddress().toString().toLocal8Bit().data(),csock->peerPort());
 }
 
+QByteArray Tap::SOCKS5AddressPort(const QAbstractSocket *address,const QAbstractSocket *port) {
+    QByteArray ret;
+    if (address->localAddress().protocol()==QAbstractSocket::IPv4Protocol) {
+        ret.reserve(5);
+        ret[0]=1;
+        quint32 ipv4=address->localAddress().toIPv4Address();
+        for (int i=0;i<4;++i)
+            ret[i+1]=(char)(unsigned char)((ipv4>>(24-i*8))%0xff);
+    } else if (address->localAddress().protocol()==QAbstractSocket::IPv6Protocol) {
+        ret.reserve(17);
+        ret[0]=4;
+        Q_IPV6ADDR ipv6=address->localAddress().toIPv6Address();
+        for (int i=0;i<16;++i)
+            ret[i+1]=ipv6[i];
+    }
+    if (ret.size()!=0) {
+        ret+=(char)(unsigned char)((port->localPort()>>8)%0xff);
+        ret+=(char)(unsigned char)(port->localPort()%0xff);
+    }
+    return ret;
+}
+
 void Tap::ClientRecv(const QByteArray &Data) {
     bool ok;
     QVariantMap qvm;
@@ -59,7 +81,7 @@ void Tap::ClientRecv(const QByteArray &Data) {
             break;
         case Handshook:
             if (Data[0]!=5||Data[1]!=1||Data[2]!=0) {
-                emit csock->SendData(QByteArray::fromHex("05070001000000000000"));
+                emit csock->SendData(QByteArray::fromHex("050700")+SOCKS5AddressPort(csock,ssock));
                 csock->disconnectFromHost();
                 return;
             }
@@ -109,10 +131,10 @@ void Tap::ServerRecv(const QByteArray &Data) {
             break;
         case Handshook:
             if (qvm["status"]=="ok") {
-                emit csock->SendData(QByteArray::fromHex("05000001000000000000"));
+                emit csock->SendData(QByteArray::fromHex("050000")+SOCKS5AddressPort(csock,ssock));
                 status=CONNECT;
             } else {
-                emit csock->SendData(QByteArray::fromHex("05020001000000000000"));
+                emit csock->SendData(QByteArray::fromHex("050200")+SOCKS5AddressPort(csock,ssock));
             }
             break;
         case CONNECT:
