@@ -33,13 +33,15 @@ Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,cons
 
 QByteArray Tap::SOCKS5AddressPort(const QAbstractSocket *address,const QAbstractSocket *port) {
     QByteArray ret;
-    if (address->localAddress().protocol()==QAbstractSocket::IPv4Protocol) {
+    bool ok;
+    address->localAddress().toIPv4Address(&ok);
+    if (ok) {
         ret.reserve(5);
         ret[0]=1;
         quint32 ipv4=address->localAddress().toIPv4Address();
         for (int i=0;i<4;++i)
-            ret[i+1]=(char)(unsigned char)((ipv4>>(24-i*8))%0xff);
-    } else if (address->localAddress().protocol()==QAbstractSocket::IPv6Protocol) {
+            ret[i+1]=(char)(unsigned char)((ipv4>>(24-i*8))&0xff);
+    } else {
         ret.reserve(17);
         ret[0]=4;
         Q_IPV6ADDR ipv6=address->localAddress().toIPv6Address();
@@ -47,8 +49,8 @@ QByteArray Tap::SOCKS5AddressPort(const QAbstractSocket *address,const QAbstract
             ret[i+1]=ipv6[i];
     }
     if (ret.size()!=0) {
-        ret+=(char)(unsigned char)((port->localPort()>>8)%0xff);
-        ret+=(char)(unsigned char)(port->localPort()%0xff);
+        ret+=(char)(unsigned char)(port->localPort()>>8);
+        ret+=(char)(unsigned char)(port->localPort()&0xff);
     }
     return ret;
 }
