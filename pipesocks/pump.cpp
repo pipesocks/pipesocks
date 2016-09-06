@@ -24,6 +24,7 @@ Pump::Pump(qintptr handle,const QString &Password,QObject *parent):QObject(paren
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     csock->setSocketDescriptor(handle);
     ssock=NULL;
+    usock=NULL;
     status=Initiated;
     printf("[%s] New connection from %s:%d\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data(),csock->peerAddress().toString().toLocal8Bit().data(),csock->peerPort());
 }
@@ -34,25 +35,39 @@ void Pump::ClientRecv(const QByteArray &Data) {
         case Initiated:
             if ((!Version::CheckVersion(qvm["version"].toString()))||qvm["password"]!=Password) {
                 qvm2["status"]="refuse";
+                emit csock->SendData(QJsonDocument::fromVariant(qvm2).toJson());
                 csock->disconnectFromHost();
                 break;
             }
             qvm2["status"]="ok";
+            qvm2["protocol"]=qvm["protocol"];
             emit csock->SendData(QJsonDocument::fromVariant(qvm2).toJson());
-            ssock=new TcpSocket(this);
-            connect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
-            connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
-            ssock->connectToHost(qvm["host"].toString(),qvm["port"].toUInt());
-            status=Connected;
+            if (qvm["protocol"]=="tcp") {
+                ssock=new TcpSocket(this);
+                connect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
+                connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
+                ssock->connectToHost(qvm["host"].toString(),qvm["port"].toUInt());
+                status=TCP;
+            } else if (qvm["protocol"]=="udp") {
+                //
+                status=UDP;
+            }
             break;
-        case Connected:
+        case TCP:
             emit ssock->SendData(Data);
+            break;
+        case UDP:
+            //
             break;
     }
 }
 
 void Pump::ServerRecv(const QByteArray &Data) {
     emit csock->SendData(Data);
+}
+
+void Pump::UDPRecv(const QHostAddress &Address,unsigned short Port,const QByteArray &Data) {
+    //
 }
 
 void Pump::EndSession() {
@@ -68,6 +83,8 @@ void Pump::EndSession() {
         csock->abort();
     else
         csock->disconnectFromHost();
+    if (usock)
+        usock->close();
     if (csock->state()==QAbstractSocket::UnconnectedState&&(ssock==NULL||ssock->state()==QAbstractSocket::UnconnectedState))
         deleteLater();
 }
