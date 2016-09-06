@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     pac.cpp \
     mainwidget.cpp \
     aboutdialog.cpp \
-    version.cpp
+    version.cpp \
+    udpsocket.cpp
 
 HEADERS += tcpsocket.h \
     securesocket.h \
@@ -27,7 +28,8 @@ HEADERS += tcpsocket.h \
     pac.h \
     mainwidget.h \
     aboutdialog.h \
-    version.h
+    version.h \
+    udpsocket.h
 
 osx {
     LIBS += -L/usr/local/lib/
