@@ -49,7 +49,9 @@ void Pump::ClientRecv(const QByteArray &Data) {
                 ssock->connectToHost(qvm["host"].toString(),qvm["port"].toUInt());
                 status=TCP;
             } else if (qvm["protocol"]=="udp") {
-                //
+                usock=new UdpSocket(this);
+                connect(usock,SIGNAL(RecvData(QHostAddress,unsigned short,QByteArray)),this,SLOT(UDPRecv(QHostAddress,unsigned short,QByteArray)));
+                usock->bind(0,QAbstractSocket::DontShareAddress);
                 status=UDP;
             }
             break;
@@ -57,7 +59,7 @@ void Pump::ClientRecv(const QByteArray &Data) {
             emit ssock->SendData(Data);
             break;
         case UDP:
-            //
+            emit usock->SendData(qvm["host"].toString(),qvm["port"].toUInt(),QByteArray::fromBase64(qvm["data"].toByteArray()));
             break;
     }
 }
@@ -67,7 +69,11 @@ void Pump::ServerRecv(const QByteArray &Data) {
 }
 
 void Pump::UDPRecv(const QHostAddress &Address,unsigned short Port,const QByteArray &Data) {
-    //
+    QVariantMap qvm;
+    qvm.insert("host",Address.toString());
+    qvm.insert("port",Port);
+    qvm.insert("data",Data.toBase64());
+    emit csock->SendData(QJsonDocument::fromVariant(qvm).toJson());
 }
 
 void Pump::EndSession() {

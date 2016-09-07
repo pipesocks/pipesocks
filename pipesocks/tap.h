@@ -45,7 +45,10 @@ private:
     TcpSocket *csock;
     SecureSocket *ssock;
     UdpSocket *usock;
+    QHostAddress uhost;
+    unsigned short uport;
     QByteArray SOCKS5AddressPort(const QAbstractSocket *address,const QAbstractSocket *port);
+    QByteArray SOCKS5AddressPort(const QHostAddress &address,unsigned short port);
 private slots:
     void ClientRecv(const QByteArray &Data);
     void ServerRecv(const QByteArray &Data);
