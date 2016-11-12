@@ -1,4 +1,4 @@
-![pipesocks](https://raw.githubusercontent.com/yvbbrjdr/pipesocks/stable/pipesocks/icons/origin.png)
+<img src="https://raw.githubusercontent.com/yvbbrjdr/pipesocks/stable/pipesocks/icons/origin.png" width="150" height="150" alt="pipesocks" />
 
 # pipesocks
 A pipe-like SOCKS5 tunnel system. 
