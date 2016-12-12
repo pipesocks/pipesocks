@@ -11,7 +11,6 @@ cd ../pipesocks/pipesocks/
 git checkout stable
 qmake && make
 cp pipesocks ../../libsodium/
-cp proxy.pac ../../
 cd ../../
 sudo rm -R pipesocks/
 cp libsodium/pipesocks ./
