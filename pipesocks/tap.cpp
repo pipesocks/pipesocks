@@ -34,6 +34,11 @@ Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,cons
 void Tap::ClientRecv(const QByteArray &Data) {
     switch (status) {
         case Initiated: {
+            if (Data[0]=='G') {
+                emit csock->SendData(PAC());
+                csock->disconnectFromHost();
+                return;
+            }
             if (Data[0]!=5) {
                 csock->disconnectFromHost();
                 return;
@@ -128,4 +133,8 @@ void Tap::EndSession() {
         deleteLater();
 }
 
-//QString("function FindPropxyForURL(url,host){return \"SOCKS5 %1;SOCKS %1\"}");
+QByteArray Tap::PAC() {
+    QString pac(QString("function FindProxyForURL(url,host){return \"SOCKS5 %1:%2;SOCKS %1:%2\"}").arg(csock->localAddress().toString().mid(7)).arg(csock->localPort()));
+    QString http(QString("HTTP/1.1 200 OK\r\nContent-Type: application/x-ns-proxy-autoconfig\r\nContent-Length: %1\r\n\r\n%2").arg(pac.length()).arg(pac));
+    return http.toLocal8Bit();
+}
