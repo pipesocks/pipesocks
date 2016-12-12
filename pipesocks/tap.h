@@ -36,12 +36,13 @@ private:
     enum Status {
         Initiated,
         Handshook,
-        CONNECT
+        Connected
     };
     QString Password;
     Status status;
     TcpSocket *csock;
     SecureSocket *ssock;
+    QByteArray PAC();
 private slots:
     void ClientRecv(const QByteArray &Data);
     void ServerRecv(const QByteArray &Data);

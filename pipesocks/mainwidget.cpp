@@ -29,15 +29,8 @@ MainWidget::MainWidget(QWidget *parent):QWidget(parent),ui(new Ui::MainWidget) {
     connect(ui->Pump,SIGNAL(clicked(bool)),this,SLOT(PumpSelected()));
     connect(ui->Pipe,SIGNAL(clicked(bool)),this,SLOT(PipeSelected()));
     connect(ui->Tap,SIGNAL(clicked(bool)),this,SLOT(TapSelected()));
-    connect(ui->PAC,SIGNAL(clicked(bool)),this,SLOT(PACSelected()));
-    connect(ui->Pump,SIGNAL(clicked(bool)),this,SLOT(OtherSelected()));
-    connect(ui->Pipe,SIGNAL(clicked(bool)),this,SLOT(OtherSelected()));
-    connect(ui->Tap,SIGNAL(clicked(bool)),this,SLOT(OtherSelected()));
     connect(ui->Start,SIGNAL(clicked(bool)),this,SLOT(StartClicked()));
     connect(ui->About,SIGNAL(clicked(bool)),this,SLOT(AboutClicked()));
-#ifdef Q_OS_OSX
-    ui->PAC->setEnabled(false);
-#endif
 }
 
 MainWidget::~MainWidget() {
@@ -65,55 +58,32 @@ void MainWidget::TapSelected() {
     ui->Password->setEnabled(true);
 }
 
-void MainWidget::PACSelected() {
-    ui->RemoteHost->setEnabled(false);
-    ui->RemotePort->setEnabled(false);
-    ui->LocalPort->setEnabled(true);
-    ui->Password->setEnabled(false);
-    if (ui->LocalPort->text()=="1080") {
-        ui->LocalPort->setText("80");
-    }
-}
-
-void MainWidget::OtherSelected() {
-    if (ui->LocalPort->text()=="80") {
-        ui->LocalPort->setText("1080");
-    }
+void MainWidget::ShowError() {
+    QMessageBox::critical(this,"Error","Blanks must be filled.");
 }
 
 void MainWidget::StartClicked() {
     if (ui->Pump->isChecked()) {
         if (ui->LocalPort->text()=="") {
-            QMessageBox::critical(this,"Error","Some blanks must be filled.");
+            ShowError();
             return;
         }
-        server=new TcpServer(TcpServer::PumpServer,ui->RemoteHost->text(),ui->RemotePort->text().toUInt(),ui->Password->text(),this);
+        server=new TcpServer(TcpServer::PumpServer,ui->RemoteHost->text(),ui->RemotePort->text().toUShort(),ui->Password->text(),this);
     } else if (ui->Pipe->isChecked()) {
         if (ui->RemoteHost->text()==""||ui->RemotePort->text()==""||ui->LocalPort->text()=="") {
-            QMessageBox::critical(this,"Error","Some blanks must be filled.");
+            ShowError();
             return;
         }
-        server=new TcpServer(TcpServer::PipeServer,ui->RemoteHost->text(),ui->RemotePort->text().toUInt(),ui->Password->text(),this);
+        server=new TcpServer(TcpServer::PipeServer,ui->RemoteHost->text(),ui->RemotePort->text().toUShort(),ui->Password->text(),this);
     } else if (ui->Tap->isChecked()) {
         if (ui->RemoteHost->text()==""||ui->RemotePort->text()==""||ui->LocalPort->text()=="") {
-            QMessageBox::critical(this,"Error","Some blanks must be filled.");
+            ShowError();
             return;
         }
-        server=new TcpServer(TcpServer::TapClient,ui->RemoteHost->text(),ui->RemotePort->text().toUInt(),ui->Password->text(),this);
-    } else if (ui->PAC->isChecked()) {
-        if (ui->LocalPort->text()=="") {
-            QMessageBox::critical(this,"Error","Some blanks must be filled.");
-            return;
-        }
-        QFile file("proxy.pac");
-        if (!file.exists()) {
-            QMessageBox::critical(this,"Error","proxy.pac not exist.");
-            return;
-        }
-        server=new TcpServer(TcpServer::PACServer,ui->RemoteHost->text(),ui->RemotePort->text().toUInt(),ui->Password->text(),this);
+        server=new TcpServer(TcpServer::TapClient,ui->RemoteHost->text(),ui->RemotePort->text().toUShort(),ui->Password->text(),this);
     }
     if (!server->listen(QHostAddress::Any,ui->LocalPort->text().toUInt())) {
-        QMessageBox::critical(this,"Error",QString("Failed to bind to port %1").arg(ui->LocalPort->text().toUInt()));
+        QMessageBox::critical(this,"Error",QString("Failed to bind to port %1").arg(ui->LocalPort->text().toUShort()));
         server->deleteLater();
         server=NULL;
         return;
@@ -121,7 +91,6 @@ void MainWidget::StartClicked() {
     ui->Pump->setEnabled(false);
     ui->Pipe->setEnabled(false);
     ui->Tap->setEnabled(false);
-    ui->PAC->setEnabled(false);
     ui->RemoteHost->setEnabled(false);
     ui->RemotePort->setEnabled(false);
     ui->LocalPort->setEnabled(false);

@@ -25,9 +25,7 @@ void TcpServer::incomingConnection(qintptr handle) {
         Pump *pump=new Pump(handle,Password);
     } else if (mode==PipeServer) {
         Pipe *pipe=new Pipe(handle,RemoteHost,RemotePort);
-    } else if (mode==TapClient) {
+    } else {
         Tap *tap=new Tap(handle,RemoteHost,RemotePort,Password);
-    } else if (mode==PACServer) {
-        PAC *pac=new PAC(handle);
     }
 }
