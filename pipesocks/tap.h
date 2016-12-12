@@ -36,7 +36,7 @@ private:
     enum Status {
         Initiated,
         Handshook,
-        CONNECT
+        Connected
     };
     QString Password;
     Status status;

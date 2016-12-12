@@ -29,25 +29,26 @@ Pump::Pump(qintptr handle,const QString &Password,QObject *parent):QObject(paren
 }
 
 void Pump::ClientRecv(const QByteArray &Data) {
-    QVariantMap qvm(QJsonDocument::fromJson(Data).toVariant().toMap()),qvm2;
     switch (status) {
-        case Initiated:
+        case Initiated: {
+            QVariantMap qvm(QJsonDocument::fromJson(Data).toVariant().toMap()),qvm2;
             if ((!Version::CheckVersion(qvm["version"].toString()))||qvm["password"]!=Password) {
-                qvm2["status"]="refuse";
+                qvm2["status"]="no";
+                emit csock->SendData(QJsonDocument::fromVariant(qvm2).toJson());
                 csock->disconnectFromHost();
                 break;
             }
-            qvm2["status"]="ok";
-            emit csock->SendData(QJsonDocument::fromVariant(qvm2).toJson());
             ssock=new TcpSocket(this);
             connect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
             connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
             ssock->connectToHost(qvm["host"].toString(),qvm["port"].toUInt());
+            qvm2["status"]="ok";
+            emit csock->SendData(QJsonDocument::fromVariant(qvm2).toJson());
             status=Connected;
             break;
+        }
         case Connected:
             emit ssock->SendData(Data);
-            break;
     }
 }
 
@@ -56,18 +57,9 @@ void Pump::ServerRecv(const QByteArray &Data) {
 }
 
 void Pump::EndSession() {
-    bool reset=csock->error()!=QAbstractSocket::RemoteHostClosedError;
-    if (ssock) {
-        reset&=ssock->error()!=QAbstractSocket::RemoteHostClosedError;
-        if (reset)
-            ssock->abort();
-        else
-            ssock->disconnectFromHost();
-    }
-    if (reset)
-        csock->abort();
-    else
-        csock->disconnectFromHost();
+    if (ssock)
+        ssock->disconnectFromHost();
+    csock->disconnectFromHost();
     if (csock->state()==QAbstractSocket::UnconnectedState&&(ssock==NULL||ssock->state()==QAbstractSocket::UnconnectedState))
         deleteLater();
 }

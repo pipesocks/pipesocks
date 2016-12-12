@@ -32,17 +32,13 @@ Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,cons
 }
 
 void Tap::ClientRecv(const QByteArray &Data) {
-    bool ok;
-    QVariantMap qvm;
-    QString host;
-    unsigned short port;
     switch (status) {
-        case Initiated:
+        case Initiated: {
             if (Data[0]!=5) {
                 csock->disconnectFromHost();
                 return;
             }
-            ok=false;
+            bool ok=false;
             for (int i=2;i<Data[1]+2;++i) {
                 if (Data[i]==0) {
                     ok=true;
@@ -57,7 +53,11 @@ void Tap::ClientRecv(const QByteArray &Data) {
             emit csock->SendData(QByteArray::fromHex("0500"));
             status=Handshook;
             break;
-        case Handshook:
+        }
+        case Handshook: {
+            QVariantMap qvm;
+            QString host;
+            unsigned short port;
             if (Data[0]!=5||Data[1]!=1||Data[2]!=0) {
                 emit csock->SendData(QByteArray::fromHex("05070001000000000000"));
                 csock->disconnectFromHost();
@@ -97,38 +97,35 @@ void Tap::ClientRecv(const QByteArray &Data) {
             qvm.insert("version",Version::GetVersion());
             emit ssock->SendData(QJsonDocument::fromVariant(qvm).toJson());
             break;
-        case CONNECT:
+        }
+        case Connected:
             emit ssock->SendData(Data);
     }
 }
 
 void Tap::ServerRecv(const QByteArray &Data) {
-    QVariantMap qvm(QJsonDocument::fromJson(Data).toVariant().toMap());
     switch (status) {
-        case Initiated:
-            break;
-        case Handshook:
+        case Handshook: {
+            QVariantMap qvm(QJsonDocument::fromJson(Data).toVariant().toMap());
             if (qvm["status"]=="ok") {
                 emit csock->SendData(QByteArray::fromHex("05000001000000000000"));
-                status=CONNECT;
+                status=Connected;
             } else {
                 emit csock->SendData(QByteArray::fromHex("05020001000000000000"));
+                csock->disconnectFromHost();
             }
             break;
-        case CONNECT:
+        }
+        case Connected:
             emit csock->SendData(Data);
     }
 }
 
 void Tap::EndSession() {
-    bool reset=ssock->error()!=QAbstractSocket::RemoteHostClosedError&&csock->error()!=QAbstractSocket::RemoteHostClosedError;
-    if (reset) {
-        csock->abort();
-        ssock->abort();
-    } else {
-        csock->disconnectFromHost();
-        ssock->disconnectFromHost();
-    }
+    csock->disconnectFromHost();
+    ssock->disconnectFromHost();
     if (ssock->state()==QAbstractSocket::UnconnectedState&&csock->state()==QAbstractSocket::UnconnectedState)
         deleteLater();
 }
+
+//QString("function FindPropxyForURL(url,host){return \"SOCKS5 %1;SOCKS %1\"}");
