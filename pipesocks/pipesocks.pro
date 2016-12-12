@@ -13,11 +13,9 @@ SOURCES += main.cpp \
     pipe.cpp \
     tap.cpp \
     pump.cpp \
-    pac.cpp \
     mainwidget.cpp \
     aboutdialog.cpp \
-    version.cpp \
-    udpsocket.cpp
+    version.cpp
 
 HEADERS += tcpsocket.h \
     securesocket.h \
@@ -25,11 +23,9 @@ HEADERS += tcpsocket.h \
     pipe.h \
     tap.h \
     pump.h \
-    pac.h \
     mainwidget.h \
     aboutdialog.h \
-    version.h \
-    udpsocket.h
+    version.h
 
 osx {
     LIBS += -L/usr/local/lib/
@@ -40,8 +36,6 @@ osx {
 win32: RC_ICONS = icons/win.ico
 
 LIBS += -lsodium
-
-DISTFILES += proxy.pac
 
 FORMS += mainwidget.ui \
     aboutdialog.ui

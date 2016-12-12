@@ -26,7 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHostInfo>
 #include "securesocket.h"
 #include "tcpsocket.h"
-#include "udpsocket.h"
 #include "version.h"
 
 class Pump : public QObject {
@@ -36,18 +35,15 @@ public:
 private:
     enum Status {
         Initiated,
-        TCP,
-        UDP
+        Connected
     };
     QString Password;
     Status status;
     SecureSocket *csock;
     TcpSocket *ssock;
-    UdpSocket *usock;
 private slots:
     void ClientRecv(const QByteArray &Data);
     void ServerRecv(const QByteArray &Data);
-    void UDPRecv(const QHostAddress &Address,unsigned short Port,const QByteArray &Data);
     void EndSession();
 };
 

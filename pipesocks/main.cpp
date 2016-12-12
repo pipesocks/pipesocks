@@ -29,8 +29,9 @@ QString FindArg(const QStringList &Arguments,char Letter) {
 }
 
 int main(int argc,char **argv) {
+    QString Usage(QString("Usage: %1 [pump|pipe|tap] <arguments>\nArguments:\n-H Remote Host\n-P Remote Port\n-p Local Port\n-k Password\n").arg(QString(*argv)));
     if (argc==1) {
-        printf("If you want to use the CLI version\nUsage: %s [pump|pipe|tap|pac] <arguments>\n\nArguments:\n\t-H Remote Host\n\t-P Remote Port <1080 by default>\n\t-p Local Port <80 for pac and 1080 for others by default>\n\t-k Password <empty by default>\n",*argv);
+        printf("%s",Usage.toStdString().c_str());
         QApplication a(argc,argv);
         MainWidget mainwidget;
         mainwidget.show();
@@ -39,47 +40,34 @@ int main(int argc,char **argv) {
         QCoreApplication a(argc,argv);
         QStringList args=a.arguments();
         QString type=args.at(1),RemoteHost=FindArg(args,'H'),Password=FindArg(args,'k');
-        unsigned short RemotePort=FindArg(args,'P').toUInt(),LocalPort=FindArg(args,'p').toUInt();
+        unsigned short RemotePort=FindArg(args,'P').toUShort(),LocalPort=FindArg(args,'p').toUShort();
+        RemotePort=(RemotePort==0)?1080:RemotePort;
+        LocalPort=(LocalPort==0)?1080:LocalPort;
         TcpServer *server;
         if (type=="pump") {
-            if (LocalPort==0)
-                LocalPort=1080;
             server=new TcpServer(TcpServer::PumpServer,RemoteHost,RemotePort,Password);
             printf("Welcome to Pipesocks pump\nServer is listening at port %d\n",LocalPort);
         } else if (type=="pipe") {
             if (RemoteHost=="") {
-                printf("Pipesocks pipe needs Remote Host (-H Remote Host)\nUsage: %s <pump|pipe|tap|pac> <arguments>\n\nArguments:\n\t-H Remote Host\n\t-P Remote Port <1080 by default>\n\t-p Local Port <80 for pac and 1080 for others by default>\n\t-k Password <empty by default>\n",*argv);
-                return 0;
+                printf("Remote Host requred\n%s",Usage.toStdString().c_str());
+                return 1;
             }
-            if (RemotePort==0)
-                RemotePort=1080;
-            if (LocalPort==0)
-                LocalPort=1080;
             server=new TcpServer(TcpServer::PipeServer,RemoteHost,RemotePort,Password);
             printf("Welcome to Pipesocks pipe\nServer is listening at port %d and connects to %s:%d\n",LocalPort,RemoteHost.toStdString().c_str(),RemotePort);
         } else if (type=="tap") {
             if (RemoteHost=="") {
-                printf("Pipesocks tap needs Remote Host (-H Remote Host)\nUsage: %s <pump|pipe|tap|pac> <arguments>\n\nArguments:\n\t-H Remote Host\n\t-P Remote Port <1080 by default>\n\t-p Local Port <80 for pac and 1080 for others by default>\n\t-k Password <empty by default>\n",*argv);
-                return 0;
+                printf("Remote Host requred\n%s",Usage.toStdString().c_str());
+                return 1;
             }
-            if (RemotePort==0)
-                RemotePort=1080;
-            if (LocalPort==0)
-                LocalPort=1080;
             server=new TcpServer(TcpServer::TapClient,RemoteHost,RemotePort,Password);
             printf("Welcome to Pipesocks tap\nServer is listening at port %d and connects to %s:%d\n",LocalPort,RemoteHost.toStdString().c_str(),RemotePort);
-        } else if (type=="pac") {
-            if (LocalPort==0)
-                LocalPort=80;
-            server=new TcpServer(TcpServer::PACServer,RemoteHost,RemotePort,Password);
-            printf("Welcome to Pipesocks pac\nServer is listening at port %d\n",LocalPort);
         } else {
-            printf("Usage: %s <pump|pipe|tap|pac> <arguments>\n\nArguments:\n\t-H Remote Host\n\t-P Remote Port <1080 by default>\n\t-p Local Port <80 for pac and 1080 for others by default>\n\t-k Password <empty by default>\n",*argv);
-            return 0;
+            printf("%s",Usage.toStdString().c_str());
+            return 1;
         }
         if (!server->listen(QHostAddress::Any,LocalPort)) {
             printf("Failed to bind to port %d, exiting. . . \n",LocalPort);
-            return 0;
+            return 1;
         }
         return a.exec();
     }

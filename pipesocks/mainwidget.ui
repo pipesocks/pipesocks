@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>249</width>
+    <width>251</width>
     <height>196</height>
    </rect>
   </property>
@@ -37,13 +37,6 @@
        </property>
        <property name="checked">
         <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="PAC">
-       <property name="text">
-        <string>PAC</string>
        </property>
       </widget>
      </item>

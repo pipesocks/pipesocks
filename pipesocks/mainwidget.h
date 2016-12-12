@@ -40,12 +40,11 @@ private:
     AboutDialog *about;
     bool dragging;
     QPoint oripos;
+    void ShowError();
 private slots:
     void PumpSelected();
     void PipeSelected();
     void TapSelected();
-    void PACSelected();
-    void OtherSelected();
     void StartClicked();
     void AboutClicked();
 protected:

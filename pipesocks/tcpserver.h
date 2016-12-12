@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "pump.h"
 #include "pipe.h"
 #include "tap.h"
-#include "pac.h"
 
 class TcpServer : public QTcpServer {
     Q_OBJECT
@@ -31,8 +30,7 @@ public:
     enum Mode {
         PumpServer,
         PipeServer,
-        TapClient,
-        PACServer
+        TapClient
     };
     explicit TcpServer(Mode mode,const QString &RemoteHost,unsigned short RemotePort,const QString &Password,QObject *parent = 0);
 private:
