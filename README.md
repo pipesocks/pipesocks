@@ -1,6 +1,13 @@
 <img src="https://raw.githubusercontent.com/yvbbrjdr/pipesocks/stable/pipesocks/icons/origin.png" width="150" height="150" alt="pipesocks" />
 
 # pipesocks
+
+[![pipesocks](https://img.shields.io/badge/pipesocks-1.2-yellow.svg?style=flat)](https://github.com/yvbbrjdr/pipesocks)
+[![yvbbrjdr](https://img.shields.io/badge/Coded%20by-yvbbrjdr-00ffff.svg?style=flat)](https://github.com/yvbbrjdr)
+[![powered](https://img.shields.io/badge/Powered%20by-Qt%20%7C%20libsodium-green.svg?style=flat)](https://github.com/yvbbrjdr/pipesocks#dependencies)
+![platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-ff69b4.svg?style=flat)
+[![license](https://img.shields.io/badge/LICENSE-GPL%20v3-blue.svg?style=flat)](http://www.gnu.org/licenses/gpl-3.0.html)
+
 A pipe-like SOCKS5 tunnel system. 
 
 ## Introduction
