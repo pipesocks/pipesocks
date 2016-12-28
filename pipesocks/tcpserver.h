@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "pump.h"
 #include "pipe.h"
 #include "tap.h"
+#include "gfwlist.h"
 
 class TcpServer : public QTcpServer {
     Q_OBJECT
@@ -38,6 +39,7 @@ private:
     QString RemoteHost;
     unsigned short RemotePort;
     QString Password;
+    GFWList *gfwlist;
 protected:
     void incomingConnection(qintptr handle);
 };
