@@ -6,7 +6,7 @@ A pipe-like SOCKS5 tunnel system.
 ## Introduction
 Pipesocks is aimed at going through firewalls which are built by national force, with strong encryption and relay servers to avoid content supervision. 
 
-This software consists of 3 parts: pump, pipe, and tap. Pump is the server outside the firewall to provide Internet data for tap. Pipe is a relay server which unconditionally transfers data through pump and tap. Tap is a client running in local with SOCKS5 interface for native clients and connects to pump or pipe. Tap can also provide PAC script if you request it using HTTP GET. 
+This software consists of 3 parts: pump, pipe, and tap. Pump is the server outside the firewall to provide Internet data for tap. Pipe is a relay server which unconditionally transfers data through pump and tap. Tap is a client running in local with SOCKS5 interface for native clients and connects to pump or pipe. Tap can also provide PAC script if you request it using HTTP GET. You can also get GFWList PAC script if you include "gfwlist" in the HTTP packet.
 
 A pipe or a tap is valid only if: 
 
