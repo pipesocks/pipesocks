@@ -16,40 +16,31 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TAP_H
-#define TAP_H
+#ifndef GFWLIST_H
+#define GFWLIST_H
 
 #include <QObject>
-#include <QJsonDocument>
-#include <QVariantMap>
-#include <QDateTime>
-#include <QHostAddress>
-#include "tcpsocket.h"
-#include "securesocket.h"
-#include "version.h"
-#include "gfwlist.h"
+#include <QTimer>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
-class Tap : public QObject {
+class GFWList : public QObject {
     Q_OBJECT
-public:
-    explicit Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,const QString &Password,GFWList *gfwlist,QObject *parent = 0);
 private:
-    enum Status {
-        Initiated,
-        Handshook,
-        Connected
-    };
-    QString Password;
-    GFWList *gfwlist;
-    Status status;
-    TcpSocket *csock;
-    SecureSocket *ssock;
-    QByteArray PAC();
+    static const QString GFWListAddress;
+    QTimer *timer;
+    QNetworkAccessManager *nam;
+    QString PAC;
+    bool available;
+public:
+    explicit GFWList(QObject *parent = 0);
+    void RequestGFWList();
+signals:
+    void RecvGFWList(const QString &GFWList);
 private slots:
-    void ClientRecv(const QByteArray &Data);
-    void ServerRecv(const QByteArray &Data);
-    void EndSession();
-    void RecvGFWList(const QString &gfwlist);
+    void timeout();
+    void ProcessGFWList(QNetworkReply *reply);
 };
 
-#endif // TAP_H
+#endif // GFWLIST_H

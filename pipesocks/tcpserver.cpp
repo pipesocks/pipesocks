@@ -18,7 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "tcpserver.h"
 
-TcpServer::TcpServer(Mode mode,const QString &RemoteHost,unsigned short RemotePort,const QString &Password,QObject *parent):QTcpServer(parent),mode(mode),RemoteHost(RemoteHost),RemotePort(RemotePort),Password(Password) {}
+TcpServer::TcpServer(Mode mode,const QString &RemoteHost,unsigned short RemotePort,const QString &Password,QObject *parent):QTcpServer(parent),mode(mode),RemoteHost(RemoteHost),RemotePort(RemotePort),Password(Password) {
+    if (mode==Mode::TapClient)
+        gfwlist=new GFWList(this);
+    else
+        gfwlist=NULL;
+}
 
 void TcpServer::incomingConnection(qintptr handle) {
     if (mode==PumpServer) {
@@ -26,6 +31,6 @@ void TcpServer::incomingConnection(qintptr handle) {
     } else if (mode==PipeServer) {
         Pipe *pipe=new Pipe(handle,RemoteHost,RemotePort);
     } else {
-        Tap *tap=new Tap(handle,RemoteHost,RemotePort,Password);
+        Tap *tap=new Tap(handle,RemoteHost,RemotePort,Password,gfwlist);
     }
 }

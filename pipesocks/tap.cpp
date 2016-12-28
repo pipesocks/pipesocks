@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "tap.h"
 
-Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,const QString &Password,QObject *parent):QObject(parent),Password(Password) {
+Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,const QString &Password,GFWList *gfwlist,QObject *parent):QObject(parent),Password(Password),gfwlist(gfwlist) {
     csock=new TcpSocket(this);
     connect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
@@ -35,8 +35,13 @@ void Tap::ClientRecv(const QByteArray &Data) {
     switch (status) {
         case Initiated: {
             if (Data[0]=='G') {
-                emit csock->SendData(PAC());
-                csock->disconnectFromHost();
+                if (Data.indexOf("gfwlist")==-1) {
+                    emit csock->SendData(PAC());
+                    csock->disconnectFromHost();
+                } else {
+                    connect(gfwlist,SIGNAL(RecvGFWList(QString)),this,SLOT(RecvGFWList(QString)));
+                    gfwlist->RequestGFWList();
+                }
                 return;
             }
             if (Data[0]!=5) {
@@ -134,7 +139,14 @@ void Tap::EndSession() {
 }
 
 QByteArray Tap::PAC() {
-    QString pac(QString("function FindProxyForURL(url,host){return \"SOCKS5 %1:%2;SOCKS %1:%2\"}").arg(csock->localAddress().toString().mid(7)).arg(csock->localPort()));
+    QString pac(QString("function FindProxyForURL(url,host){return\"SOCKS5 %1:%2;SOCKS %1:%2\"}").arg(csock->localAddress().toString().mid(7)).arg(csock->localPort()));
     QString http(QString("HTTP/1.1 200 OK\r\nContent-Type: application/x-ns-proxy-autoconfig\r\nContent-Length: %1\r\n\r\n%2").arg(pac.length()).arg(pac));
     return http.toLocal8Bit();
+}
+
+void Tap::RecvGFWList(const QString &gfwlist) {
+    QString pac(gfwlist.arg(csock->localAddress().toString().mid(7)).arg(csock->localPort()));
+    QString http(QString("HTTP/1.1 200 OK\r\nContent-Type: application/x-ns-proxy-autoconfig\r\nContent-Length: %1\r\n\r\n%2").arg(pac.length()).arg(pac));
+    emit csock->SendData(http.toLocal8Bit());
+    csock->disconnectFromHost();
 }
