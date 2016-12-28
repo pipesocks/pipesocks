@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "tcpserver.h"
 
 TcpServer::TcpServer(Mode mode,const QString &RemoteHost,unsigned short RemotePort,const QString &Password,QObject *parent):QTcpServer(parent),mode(mode),RemoteHost(RemoteHost),RemotePort(RemotePort),Password(Password) {
-    if (mode==Mode::TapClient)
+    if (mode==TapClient)
         gfwlist=new GFWList(this);
     else
         gfwlist=NULL;
