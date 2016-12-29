@@ -50,6 +50,7 @@ private slots:
     void ServerRecv(const QByteArray &Data);
     void EndSession();
     void RecvGFWList(const QString &gfwlist);
+    void GFWListFail();
 };
 
 #endif // TAP_H

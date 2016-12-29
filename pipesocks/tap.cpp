@@ -40,6 +40,7 @@ void Tap::ClientRecv(const QByteArray &Data) {
                     csock->disconnectFromHost();
                 } else {
                     connect(gfwlist,SIGNAL(RecvGFWList(QString)),this,SLOT(RecvGFWList(QString)));
+                    connect(gfwlist,SIGNAL(Fail()),this,SLOT(GFWListFail()));
                     gfwlist->RequestGFWList();
                 }
                 return;
@@ -148,5 +149,10 @@ void Tap::RecvGFWList(const QString &gfwlist) {
     QString pac(gfwlist.arg(csock->localAddress().toString().mid(7)).arg(csock->localPort()));
     QString http(QString("HTTP/1.1 200 OK\r\nContent-Type: application/x-ns-proxy-autoconfig\r\nContent-Length: %1\r\n\r\n%2").arg(pac.length()).arg(pac));
     emit csock->SendData(http.toLocal8Bit());
+    csock->disconnectFromHost();
+}
+
+void Tap::GFWListFail() {
+    emit csock->SendData("HTTP/1.1 503 Server Unavailable\r\nContent-Length: 0\r\n\r\n");
     csock->disconnectFromHost();
 }

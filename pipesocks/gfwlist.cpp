@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const QString GFWList::GFWListAddress("https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt");
 
 GFWList::GFWList(QObject *parent):QObject(parent) {
-    available=false;
+    retrieving=available=false;
     timer=new QTimer(this);
     nam=new QNetworkAccessManager(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(timeout()));
@@ -33,14 +33,23 @@ GFWList::GFWList(QObject *parent):QObject(parent) {
 void GFWList::RequestGFWList() {
     if (available)
         emit RecvGFWList(PAC);
+    else if (!retrieving)
+        timeout();
 }
 
 void GFWList::timeout() {
-    available=false;
+    retrieving=true;
     nam->get(QNetworkRequest(QUrl(GFWListAddress)));
 }
 
 void GFWList::ProcessGFWList(QNetworkReply *reply) {
+    retrieving=false;
+    if (reply->error()!=QNetworkReply::NoError) {
+        printf("[%s] GFWList not retrieved\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data());
+        if (!available)
+            emit Fail();
+        return;
+    }
     QStringList list(QString(QByteArray::fromBase64(reply->readAll())).split('\n'));
     PAC="function FindProxyForURL(url,host){var scheme=url.substr(0,url.indexOf(\":\"));";
     for (QStringList::iterator it=list.begin();it!=list.end();++it) {

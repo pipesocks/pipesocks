@@ -32,12 +32,13 @@ private:
     QTimer *timer;
     QNetworkAccessManager *nam;
     QString PAC;
-    bool available;
+    bool available,retrieving;
 public:
     explicit GFWList(QObject *parent = 0);
     void RequestGFWList();
 signals:
     void RecvGFWList(const QString &GFWList);
+    void Fail();
 private slots:
     void timeout();
     void ProcessGFWList(QNetworkReply *reply);
