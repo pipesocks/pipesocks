@@ -30,7 +30,7 @@ SecureSocket::SecureSocket(const QString &Password,QObject *parent):TcpSocket(pa
 
 void SecureSocket::StateChangedSlot(QAbstractSocket::SocketState state) {
     if (state==ConnectedState) {
-        unsigned short l=randombytes_uniform((unsigned short)(0xffff)-crypto_box_PUBLICKEYBYTES-2);
+        unsigned short l=randombytes_uniform(4000);
         QByteArray garbage(l+2,0);
         randombytes_buf(garbage.data()+2,l);
         l+=crypto_box_PUBLICKEYBYTES+2;
