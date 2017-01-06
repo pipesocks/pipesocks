@@ -23,7 +23,7 @@ Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,cons
     connect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     csock->setSocketDescriptor(handle);
-    ssock=new SecureSocket(this);
+    ssock=new SecureSocket(Password,this);
     connect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
     connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     ssock->connectToHost(RemoteHost,RemotePort);
@@ -116,6 +116,8 @@ void Tap::ClientRecv(const QByteArray &Data) {
 
 void Tap::ServerRecv(const QByteArray &Data) {
     switch (status) {
+        case Initiated:
+            break;
         case Handshook: {
             QVariantMap qvm(QJsonDocument::fromJson(Data).toVariant().toMap());
             if (qvm["status"]=="ok") {

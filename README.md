@@ -40,7 +40,7 @@ curl https://raw.githubusercontent.com/yvbbrjdr/pipesocks/stable/install.sh | sh
 
 And you'll get a pipesocks binary file. 
 
-### OS X
+### macOS
 To install libsodium, you can type these commands in your terminal: 
 
 ```bash

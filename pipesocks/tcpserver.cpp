@@ -27,10 +27,10 @@ TcpServer::TcpServer(Mode mode,const QString &RemoteHost,unsigned short RemotePo
 
 void TcpServer::incomingConnection(qintptr handle) {
     if (mode==PumpServer) {
-        Pump *pump=new Pump(handle,Password);
+        new Pump(handle,Password);
     } else if (mode==PipeServer) {
-        Pipe *pipe=new Pipe(handle,RemoteHost,RemotePort);
+        new Pipe(handle,RemoteHost,RemotePort);
     } else {
-        Tap *tap=new Tap(handle,RemoteHost,RemotePort,Password,gfwlist);
+        new Tap(handle,RemoteHost,RemotePort,Password,gfwlist);
     }
 }

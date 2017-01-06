@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "pump.h"
 
 Pump::Pump(qintptr handle,const QString &Password,QObject *parent):QObject(parent),Password(Password) {
-    csock=new SecureSocket(this);
+    csock=new SecureSocket(Password,this);
     connect(csock,SIGNAL(RecvData(QByteArray)),this,SLOT(ClientRecv(QByteArray)));
     connect(csock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     csock->setSocketDescriptor(handle);

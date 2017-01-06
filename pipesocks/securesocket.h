@@ -27,13 +27,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class SecureSocket : public TcpSocket {
     Q_OBJECT
 public:
-    explicit SecureSocket(QObject *parent = 0);
+    explicit SecureSocket(const QString &Password,QObject *parent = 0);
 private:
     QByteArray LocalPubKey,LocalPriKey,RemotePubKey;
     QList<QByteArray>SendBuffer;
     QByteArray RecvBuffer;
     QByteArray Encrypt(const QByteArray &Data);
     QByteArray Decrypt(const QByteArray &Data);
+    void SendUnencrypted(const QByteArray &Data);
+    unsigned char XORKey;
 private slots:
     void StateChangedSlot(QAbstractSocket::SocketState state);
     void SendDataSlot(const QByteArray &Data);
