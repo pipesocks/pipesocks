@@ -2,7 +2,7 @@
 
 # pipesocks
 
-[![pipesocks](https://img.shields.io/badge/pipesocks-1.2-yellow.svg?style=flat)](https://github.com/yvbbrjdr/pipesocks)
+[![pipesocks](https://img.shields.io/badge/pipesocks-1.3-yellow.svg?style=flat)](https://github.com/yvbbrjdr/pipesocks)
 [![yvbbrjdr](https://img.shields.io/badge/Coded%20by-yvbbrjdr-00ffff.svg?style=flat)](https://github.com/yvbbrjdr)
 [![powered](https://img.shields.io/badge/Powered%20by-Qt%20%7C%20libsodium-green.svg?style=flat)](https://github.com/yvbbrjdr/pipesocks#dependencies)
 ![platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-ff69b4.svg?style=flat)
