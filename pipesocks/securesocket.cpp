@@ -30,22 +30,24 @@ SecureSocket::SecureSocket(const QString &Password,QObject *parent):TcpSocket(pa
 
 void SecureSocket::StateChangedSlot(QAbstractSocket::SocketState state) {
     if (state==ConnectedState) {
-        unsigned short l=randombytes_uniform(4000);
-        QByteArray garbage(l+2,0);
-        randombytes_buf(garbage.data()+2,l);
-        l+=crypto_box_PUBLICKEYBYTES+2;
-        garbage[0]=((unsigned char)(l>>8))^XORKey;
-        garbage[1]=((unsigned char)(l))^XORKey;
+        unsigned int l=randombytes_uniform(4000);
+        QByteArray garbage(l+3,0);
+        randombytes_buf(garbage.data()+3,l);
+        l+=crypto_box_PUBLICKEYBYTES+3;
+        garbage[0]=((unsigned char)(l>>16))^XORKey;
+        garbage[1]=((unsigned char)(l>>8))^XORKey;
+        garbage[2]=((unsigned char)(l))^XORKey;
         write(garbage+LocalPubKey);
     }
 }
 
 void SecureSocket::SendUnencrypted(const QByteArray &Data) {
     QByteArray encrypted(Encrypt(Data));
-    unsigned short l=encrypted.length()+2;
-    QByteArray len(2,0);
-    len[0]=((unsigned char)(l>>8))^XORKey;
-    len[1]=((unsigned char)(l))^XORKey;
+    unsigned int l=encrypted.length()+3;
+    QByteArray len(3,0);
+    len[0]=((unsigned char)(l>>16))^XORKey;
+    len[1]=((unsigned char)(l>>8))^XORKey;
+    len[2]=((unsigned char)(l))^XORKey;
     write(len+encrypted);
 }
 
@@ -60,13 +62,14 @@ void SecureSocket::SendDataSlot(const QByteArray &Data) {
 
 void SecureSocket::RecvDataSlot() {
     RecvBuffer+=readAll();
-    while (RecvBuffer.length()>=2) {
-        unsigned short l=((unsigned char)(RecvBuffer[0]))^XORKey;
+    while (RecvBuffer.length()>=3) {
+        unsigned int l=((unsigned char)(RecvBuffer[0]))^XORKey;
         l=(l<<8)+(((unsigned char)(RecvBuffer[1]))^XORKey);
-        if (RecvBuffer.length()<l)
+        l=(l<<8)+(((unsigned char)(RecvBuffer[2]))^XORKey);
+        if ((unsigned int)RecvBuffer.length()<l)
             return;
         QByteArray segment(RecvBuffer.left(l));
-        segment=segment.mid(2);
+        segment=segment.mid(3);
         RecvBuffer=RecvBuffer.mid(l);
         if (RemotePubKey.size()==0) {
             RemotePubKey=segment.right(crypto_box_PUBLICKEYBYTES);
