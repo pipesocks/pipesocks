@@ -31,6 +31,9 @@ public:
     explicit Pipe(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,QObject *parent = 0);
 private:
     TcpSocket *csock,*ssock;
+    QHostAddress CHost;
+    unsigned short CPort;
+    bool deleted;
 private slots:
     void ClientRecv(const QByteArray &Data);
     void ServerRecv(const QByteArray &Data);

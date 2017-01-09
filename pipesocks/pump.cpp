@@ -25,6 +25,9 @@ Pump::Pump(qintptr handle,const QString &Password,QObject *parent):QObject(paren
     csock->setSocketDescriptor(handle);
     ssock=NULL;
     usock=NULL;
+    CHost=csock->peerAddress();
+    CPort=csock->peerPort();
+    deleted=false;
     status=Initiated;
     Log::log(csock,"connection established");
 }
@@ -77,9 +80,11 @@ void Pump::EndSession() {
     if (ssock)
         ssock->disconnectFromHost();
     csock->disconnectFromHost();
-    if (csock->state()==QAbstractSocket::UnconnectedState&&(ssock==NULL||ssock->state()==QAbstractSocket::UnconnectedState)) {
+    if (!deleted&&csock->state()==QAbstractSocket::UnconnectedState&&(ssock==NULL||ssock->state()==QAbstractSocket::UnconnectedState)) {
+        deleted=true;
         if (usock)
             usock->close();
+        Log::log(CHost.toString().mid(7)+':'+QString::number(CPort)+" disconnected");
         deleteLater();
     }
 }

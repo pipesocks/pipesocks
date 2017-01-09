@@ -27,6 +27,9 @@ Pipe::Pipe(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,QO
     connect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
     connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     ssock->connectToHost(RemoteHost,RemotePort);
+    CHost=csock->peerAddress();
+    CPort=csock->peerPort();
+    deleted=false;
     Log::log(csock,"connection established");
 }
 
@@ -41,6 +44,9 @@ void Pipe::ServerRecv(const QByteArray &Data) {
 void Pipe::EndSession() {
     csock->disconnectFromHost();
     ssock->disconnectFromHost();
-    if (ssock->state()==QAbstractSocket::UnconnectedState&&csock->state()==QAbstractSocket::UnconnectedState)
+    if (!deleted&&ssock->state()==QAbstractSocket::UnconnectedState&&csock->state()==QAbstractSocket::UnconnectedState) {
+        deleted=true;
+        Log::log(CHost.toString().mid(7)+':'+QString::number(CPort)+" disconnected");
         deleteLater();
+    }
 }
