@@ -16,25 +16,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PIPE_H
-#define PIPE_H
+#ifndef LOG_H
+#define LOG_H
 
-#include <QObject>
-#include <QDateTime>
+#include <QAbstractSocket>
 #include <QHostAddress>
-#include "tcpsocket.h"
-#include "log.h"
+#include <QString>
+#include <QDateTime>
+#include <cstdio>
 
-class Pipe : public QObject {
-    Q_OBJECT
+class Log {
 public:
-    explicit Pipe(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,QObject *parent = 0);
-private:
-    TcpSocket *csock,*ssock;
-private slots:
-    void ClientRecv(const QByteArray &Data);
-    void ServerRecv(const QByteArray &Data);
-    void EndSession();
+    static void log(const QString &message);
+    static void log(const QAbstractSocket *socket,const QString &message);
 };
 
-#endif // PIPE_H
+#endif // LOG_H

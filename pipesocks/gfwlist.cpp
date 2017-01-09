@@ -45,7 +45,7 @@ void GFWList::timeout() {
 void GFWList::ProcessGFWList(QNetworkReply *reply) {
     retrieving=false;
     if (reply->error()!=QNetworkReply::NoError) {
-        printf("[%s] GFWList not retrieved\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data());
+        Log::log("GFWList not retrieved");
         if (!available)
             emit Fail();
         return;
@@ -95,6 +95,6 @@ void GFWList::ProcessGFWList(QNetworkReply *reply) {
     }
     PAC+="return\"DIRECT;SOCKS5 %2:%3;SOCKS %2:%3\";}";
     available=true;
-    printf("[%s] GFWList retrieved\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data());
+    Log::log("GFWList retrieved");
     emit RecvGFWList(PAC);
 }

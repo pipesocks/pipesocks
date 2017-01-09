@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     aboutdialog.cpp \
     version.cpp \
     gfwlist.cpp \
-    udpsocket.cpp
+    udpsocket.cpp \
+    log.cpp
 
 HEADERS += tcpsocket.h \
     securesocket.h \
@@ -29,7 +30,8 @@ HEADERS += tcpsocket.h \
     aboutdialog.h \
     version.h \
     gfwlist.h \
-    udpsocket.h
+    udpsocket.h \
+    log.h
 
 osx {
     LIBS += -L/usr/local/lib/

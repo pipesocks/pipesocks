@@ -26,7 +26,7 @@ Pump::Pump(qintptr handle,const QString &Password,QObject *parent):QObject(paren
     ssock=NULL;
     usock=NULL;
     status=Initiated;
-    printf("[%s] New connection from %s:%d\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data(),csock->peerAddress().toString().toLocal8Bit().data(),csock->peerPort());
+    Log::log(csock,"connection established");
 }
 
 void Pump::ClientRecv(const QByteArray &Data) {
@@ -37,6 +37,7 @@ void Pump::ClientRecv(const QByteArray &Data) {
                 qvm2.insert("status","no");
                 emit csock->SendData(QJsonDocument::fromVariant(qvm2).toJson());
                 csock->disconnectFromHost();
+                Log::log(csock,"was refused");
                 break;
             }
             if (qvm["protocol"]=="TCP") {
@@ -45,10 +46,12 @@ void Pump::ClientRecv(const QByteArray &Data) {
                 connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
                 ssock->connectToHost(qvm["host"].toString(),qvm["port"].toUInt());
                 status=TCP;
+                Log::log(csock,"requested TCP connection to "+qvm["host"].toString()+':'+QString::number(qvm["port"].toUInt()));
             } else if (qvm["protocol"]=="UDP") {
                 usock=new UdpSocket(this);
                 connect(usock,SIGNAL(RecvData(QHostAddress,unsigned short,QByteArray)),this,SLOT(UDPRecv(QHostAddress,unsigned short,QByteArray)));
                 status=UDP;
+                Log::log(csock,"requested UDP association");
             }
             qvm2.insert("status","ok");
             qvm2.insert("protocol",qvm["protocol"].toString());
@@ -61,6 +64,7 @@ void Pump::ClientRecv(const QByteArray &Data) {
         case UDP: {
             QVariantMap qvm(QJsonDocument::fromJson(Data).toVariant().toMap());
             emit usock->SendData(qvm["host"].toString(),qvm["port"].toUInt(),QByteArray::fromBase64(qvm["data"].toByteArray()));
+            Log::log(csock,"sent a UDP package to "+qvm["host"].toString()+':'+QString::number(qvm["port"].toUInt()));
         }
     }
 }
@@ -86,4 +90,5 @@ void Pump::UDPRecv(const QHostAddress &Host,unsigned short Port,const QByteArray
     qvm.insert("port",Port);
     qvm.insert("data",Data.toBase64());
     emit csock->SendData(QJsonDocument::fromVariant(qvm).toJson());
+    Log::log(csock,"received a UDP package from "+Host.toString().mid(7)+':'+QString::number(Port));
 }

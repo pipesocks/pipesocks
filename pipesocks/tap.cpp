@@ -29,7 +29,7 @@ Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,cons
     ssock->connectToHost(RemoteHost,RemotePort);
     usock=NULL;
     status=Initiated;
-    printf("[%s] New connection from %s:%d\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data(),csock->peerAddress().toString().toLocal8Bit().data(),csock->peerPort());
+    Log::log(csock,"connection established");
 }
 
 void Tap::ClientRecv(const QByteArray &Data) {
@@ -39,10 +39,12 @@ void Tap::ClientRecv(const QByteArray &Data) {
                 if (Data.indexOf("gfwlist")==-1) {
                     emit csock->SendData(PAC());
                     csock->disconnectFromHost();
+                    Log::log(csock,"requested global PAC");
                 } else {
                     connect(gfwlist,SIGNAL(RecvGFWList(QString)),this,SLOT(RecvGFWList(QString)));
                     connect(gfwlist,SIGNAL(Fail()),this,SLOT(GFWListFail()));
                     gfwlist->RequestGFWList();
+                    Log::log(csock,"requested GFWList PAC");
                 }
                 return;
             }
@@ -80,8 +82,10 @@ void Tap::ClientRecv(const QByteArray &Data) {
             qvm.insert("version",Version::GetVersion());
             if (Data[1]==1) {
                 qvm.insert("protocol","TCP");
+                Log::log(csock,"requested TCP connection to "+hostport.first+':'+QString::number(hostport.second));
             } else if (Data[1]==3) {
                 qvm.insert("protocol","UDP");
+                Log::log(csock,"requested UDP association");
             }
             emit ssock->SendData(QJsonDocument::fromVariant(qvm).toJson());
             break;
@@ -113,6 +117,7 @@ void Tap::ServerRecv(const QByteArray &Data) {
             } else {
                 emit csock->SendData(QByteArray::fromHex("05020001000000000000"));
                 csock->disconnectFromHost();
+                Log::log("Connection refused by pump");
             }
             break;
         }
@@ -122,6 +127,7 @@ void Tap::ServerRecv(const QByteArray &Data) {
         case UDPASSOCIATE: {
             QVariantMap qvm(QJsonDocument::fromJson(Data).toVariant().toMap());
             emit usock->SendData(UHost.toString(),UPort,QByteArray::fromHex("000000")+toSOCKS5(QHostAddress(qvm["host"].toString()),qvm["port"].toUInt())+QByteArray::fromBase64(qvm["data"].toByteArray()));
+            Log::log(csock,"received a UDP package from "+qvm["host"].toString().mid(7)+':'+QString::number(qvm["port"].toUInt()));
         }
     }
 }
@@ -152,6 +158,7 @@ void Tap::RecvGFWList(const QString &gfwlist) {
 void Tap::GFWListFail() {
     emit csock->SendData("HTTP/1.1 503 Server Unavailable\r\nContent-Length: 0\r\n\r\n");
     csock->disconnectFromHost();
+    Log::log(csock,"failed to get GFWList PAC");
 }
 
 void Tap::UDPRecv(const QHostAddress &Host,unsigned short Port,const QByteArray &Data) {
@@ -172,6 +179,7 @@ void Tap::UDPRecv(const QHostAddress &Host,unsigned short Port,const QByteArray 
     else if (Data[3]==4)
         qvm.insert("data",Data.mid(19).toBase64());
     emit ssock->SendData(QJsonDocument::fromVariant(qvm).toJson());
+    Log::log(csock,"sent a UDP package to "+hostport.first+':'+QString::number(hostport.second));
 }
 
 QPair<QString,unsigned short>Tap::toNormal(const QByteArray &SOCKS5) {

@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "tcpsocket.h"
 #include "udpsocket.h"
 #include "version.h"
+#include "log.h"
 
 class Pump : public QObject {
     Q_OBJECT
