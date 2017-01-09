@@ -23,7 +23,7 @@ Or
 
 2) It is connected to a valid pipe. 
 
-###### Note that this program only supports TCP. 
+###### This program supports TCP and UDP.
 
 ## Deployment
 ### General
