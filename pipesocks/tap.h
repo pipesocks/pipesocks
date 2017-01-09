@@ -24,8 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QVariantMap>
 #include <QDateTime>
 #include <QHostAddress>
+#include <QPair>
 #include "tcpsocket.h"
 #include "securesocket.h"
+#include "udpsocket.h"
 #include "version.h"
 #include "gfwlist.h"
 
@@ -37,17 +39,24 @@ private:
     enum Status {
         Initiated,
         Handshook,
-        Connected
+        CONNECT,
+        UDPASSOCIATE
     };
     QString Password;
     GFWList *gfwlist;
     Status status;
     TcpSocket *csock;
     SecureSocket *ssock;
+    UdpSocket *usock;
+    QHostAddress UHost;
+    unsigned short UPort;
     QByteArray PAC();
+    QPair<QString,unsigned short>toNormal(const QByteArray &SOCKS5);
+    QByteArray toSOCKS5(const QHostAddress &Host,unsigned short Port);
 private slots:
     void ClientRecv(const QByteArray &Data);
     void ServerRecv(const QByteArray &Data);
+    void UDPRecv(const QHostAddress&,unsigned short,const QByteArray &Data);
     void EndSession();
     void RecvGFWList(const QString &gfwlist);
     void GFWListFail();

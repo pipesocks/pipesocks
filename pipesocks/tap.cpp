@@ -27,6 +27,7 @@ Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,cons
     connect(ssock,SIGNAL(RecvData(QByteArray)),this,SLOT(ServerRecv(QByteArray)));
     connect(ssock,SIGNAL(disconnected()),this,SLOT(EndSession()));
     ssock->connectToHost(RemoteHost,RemotePort);
+    usock=NULL;
     status=Initiated;
     printf("[%s] New connection from %s:%d\n",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toLocal8Bit().data(),csock->peerAddress().toString().toLocal8Bit().data(),csock->peerPort());
 }
@@ -67,50 +68,29 @@ void Tap::ClientRecv(const QByteArray &Data) {
         }
         case Handshook: {
             QVariantMap qvm;
-            QString host;
-            unsigned short port;
-            if (Data[0]!=5||Data[1]!=1||Data[2]!=0) {
+            if (Data[0]!=5||Data[1]==2||Data[2]!=0) {
                 emit csock->SendData(QByteArray::fromHex("05070001000000000000"));
                 csock->disconnectFromHost();
                 return;
             }
-            if (Data[3]==1) {
-                host=QString("%1.%2.%3.%4")
-                        .arg((unsigned char)Data[4])
-                        .arg((unsigned char)Data[5])
-                        .arg((unsigned char)Data[6])
-                        .arg((unsigned char)Data[7]);
-            } else if (Data[3]==3) {
-                host=Data.mid(5,Data[4]);
-            } else if (Data[3]==4) {
-                host=QString("%1%2:%3%4:%5%6:%7%8:%9%10:%11%12:%13%14:%15%16")
-                        .arg((unsigned char)Data[4],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[5],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[6],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[7],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[8],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[9],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[10],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[11],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[12],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[13],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[14],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[15],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[16],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[17],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[18],2,16,QLatin1Char('0'))
-                        .arg((unsigned char)Data[19],2,16,QLatin1Char('0'));
-            }
-            qvm.insert("host",host);
-            port=((unsigned char)Data[Data.length()-2]<<8)+(unsigned char)Data[Data.length()-1];
-            qvm.insert("port",port);
+            QPair<QString,unsigned short>hostport=toNormal(Data.mid(3));
+            qvm.insert("host",hostport.first);
+            qvm.insert("port",hostport.second);
             qvm.insert("password",Password);
             qvm.insert("version",Version::GetVersion());
+            if (Data[1]==1) {
+                qvm.insert("protocol","TCP");
+            } else if (Data[1]==3) {
+                qvm.insert("protocol","UDP");
+            }
             emit ssock->SendData(QJsonDocument::fromVariant(qvm).toJson());
             break;
         }
-        case Connected:
+        case CONNECT:
             emit ssock->SendData(Data);
+            break;
+        case UDPASSOCIATE:
+            break;
     }
 }
 
@@ -121,24 +101,39 @@ void Tap::ServerRecv(const QByteArray &Data) {
         case Handshook: {
             QVariantMap qvm(QJsonDocument::fromJson(Data).toVariant().toMap());
             if (qvm["status"]=="ok") {
-                emit csock->SendData(QByteArray::fromHex("05000001000000000000"));
-                status=Connected;
+                if (qvm["protocol"]=="TCP") {
+                    emit csock->SendData(QByteArray::fromHex("05000001000000000000"));
+                    status=CONNECT;
+                } else if (qvm["protocol"]=="UDP") {
+                    usock=new UdpSocket(this);
+                    connect(usock,SIGNAL(RecvData(QHostAddress,unsigned short,QByteArray)),this,SLOT(UDPRecv(QHostAddress,unsigned short,QByteArray)));
+                    emit csock->SendData(QByteArray::fromHex("050000")+toSOCKS5(csock->localAddress(),usock->localPort()));
+                    status=UDPASSOCIATE;
+                }
             } else {
                 emit csock->SendData(QByteArray::fromHex("05020001000000000000"));
                 csock->disconnectFromHost();
             }
             break;
         }
-        case Connected:
+        case CONNECT:
             emit csock->SendData(Data);
+            break;
+        case UDPASSOCIATE: {
+            QVariantMap qvm(QJsonDocument::fromJson(Data).toVariant().toMap());
+            emit usock->SendData(UHost.toString(),UPort,QByteArray::fromHex("000000")+toSOCKS5(QHostAddress(qvm["host"].toString()),qvm["port"].toUInt())+QByteArray::fromBase64(qvm["data"].toByteArray()));
+        }
     }
 }
 
 void Tap::EndSession() {
     csock->disconnectFromHost();
     ssock->disconnectFromHost();
-    if (ssock->state()==QAbstractSocket::UnconnectedState&&csock->state()==QAbstractSocket::UnconnectedState)
+    if (ssock->state()==QAbstractSocket::UnconnectedState&&csock->state()==QAbstractSocket::UnconnectedState) {
+        if (usock)
+            usock->close();
         deleteLater();
+    }
 }
 
 QByteArray Tap::PAC() {
@@ -157,4 +152,81 @@ void Tap::RecvGFWList(const QString &gfwlist) {
 void Tap::GFWListFail() {
     emit csock->SendData("HTTP/1.1 503 Server Unavailable\r\nContent-Length: 0\r\n\r\n");
     csock->disconnectFromHost();
+}
+
+void Tap::UDPRecv(const QHostAddress &Host,unsigned short Port,const QByteArray &Data) {
+    UHost=Host;
+    UPort=Port;
+    if (Data[0]||Data[1]||Data[2]) {
+        csock->disconnectFromHost();
+        return;
+    }
+    QPair<QString,unsigned short>hostport=toNormal(Data.mid(3));
+    QVariantMap qvm;
+    qvm.insert("host",hostport.first);
+    qvm.insert("port",hostport.second);
+    if (Data[3]==1)
+        qvm.insert("data",Data.mid(7).toBase64());
+    else if (Data[3]==3)
+        qvm.insert("data",Data.mid(Data[4]+7).toBase64());
+    else if (Data[3]==4)
+        qvm.insert("data",Data.mid(19).toBase64());
+    emit ssock->SendData(QJsonDocument::fromVariant(qvm).toJson());
+}
+
+QPair<QString,unsigned short>Tap::toNormal(const QByteArray &SOCKS5) {
+    QString host;
+    unsigned short port=0;
+    if (SOCKS5[0]==1) {
+        host=QString("%1.%2.%3.%4")
+                .arg((unsigned char)SOCKS5[1])
+                .arg((unsigned char)SOCKS5[2])
+                .arg((unsigned char)SOCKS5[3])
+                .arg((unsigned char)SOCKS5[4]);
+        port=((unsigned short)(unsigned char)SOCKS5[5]<<8)+(unsigned char)SOCKS5[6];
+    } else if (SOCKS5[0]==3) {
+        host=SOCKS5.mid(2,SOCKS5[1]);
+        port=((unsigned short)(unsigned char)SOCKS5[SOCKS5[1]+2]<<8)+(unsigned char)SOCKS5[SOCKS5[1]+3];
+    } else if (SOCKS5[0]==4) {
+        host=QString("%1%2:%3%4:%5%6:%7%8:%9%10:%11%12:%13%14:%15%16")
+                .arg((unsigned char)SOCKS5[1],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[2],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[3],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[4],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[5],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[6],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[7],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[8],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[9],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[10],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[11],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[12],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[13],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[14],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[15],2,16,QLatin1Char('0'))
+                .arg((unsigned char)SOCKS5[16],2,16,QLatin1Char('0'));
+        port=((unsigned short)(unsigned char)SOCKS5[17]<<8)+(unsigned char)SOCKS5[18];
+    }
+    return QPair<QString,unsigned short>(host,port);
+}
+
+QByteArray Tap::toSOCKS5(const QHostAddress &Host,unsigned short Port) {
+    QByteArray ret;
+    bool is4;
+    unsigned int ipv4=Host.toIPv4Address(&is4);
+    if (is4) {
+        ret+=char(1);
+        ret+=(unsigned char)(ipv4>>24);
+        ret+=(unsigned char)(ipv4>>16);
+        ret+=(unsigned char)(ipv4>>8);
+        ret+=(unsigned char)(ipv4);
+    } else {
+        Q_IPV6ADDR ipv6=Host.toIPv6Address();
+        ret+=char(4);
+        for (int i=0;i<16;++i)
+            ret+=(unsigned char)ipv6[i];
+    }
+    ret+=(unsigned char)(Port>>8);
+    ret+=(unsigned char)(Port);
+    return ret;
 }
