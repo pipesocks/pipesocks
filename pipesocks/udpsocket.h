@@ -16,38 +16,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PUMP_H
-#define PUMP_H
+#ifndef UDPSOCKET_H
+#define UDPSOCKET_H
 
-#include <QObject>
-#include <QJsonDocument>
-#include <QVariantMap>
-#include <QDateTime>
-#include "securesocket.h"
-#include "tcpsocket.h"
-#include "udpsocket.h"
-#include "version.h"
+#include <QUdpSocket>
+#include <QHostInfo>
 
-class Pump : public QObject {
+class UdpSocket : public QUdpSocket {
     Q_OBJECT
 public:
-    explicit Pump(qintptr handle,const QString &Password,QObject *parent = 0);
-private:
-    enum Status {
-        Initiated,
-        TCP,
-        UDP
-    };
-    QString Password;
-    Status status;
-    SecureSocket *csock;
-    TcpSocket *ssock;
-    UdpSocket *usock;
+    explicit UdpSocket(QObject *parent = 0);
+signals:
+    void SendData(const QString &Host,unsigned short Port,const QByteArray &Data);
+    void RecvData(const QHostAddress &Host,unsigned short Port,const QByteArray &Data);
 private slots:
-    void ClientRecv(const QByteArray &Data);
-    void ServerRecv(const QByteArray &Data);
-    void UDPRecv(const QHostAddress &Host,unsigned short Port,const QByteArray &Data);
-    void EndSession();
+    void SendDataSlot(const QString &Host,unsigned short Port,const QByteArray &Data);
+    void RecvDataSlot();
 };
 
-#endif // PUMP_H
+#endif // UDPSOCKET_H
