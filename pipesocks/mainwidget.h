@@ -22,8 +22,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWidget>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QFileDialog>
 #include "aboutdialog.h"
 #include "tcpserver.h"
+#include "log.h"
 
 namespace Ui {
     class MainWidget;
@@ -47,6 +49,7 @@ private slots:
     void TapSelected();
     void StartClicked();
     void AboutClicked();
+    void DumpClicked();
 protected:
     void closeEvent(QCloseEvent*);
     void mousePressEvent(QMouseEvent *event);

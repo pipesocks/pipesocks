@@ -31,6 +31,7 @@ MainWidget::MainWidget(QWidget *parent):QWidget(parent),ui(new Ui::MainWidget) {
     connect(ui->Tap,SIGNAL(clicked(bool)),this,SLOT(TapSelected()));
     connect(ui->Start,SIGNAL(clicked(bool)),this,SLOT(StartClicked()));
     connect(ui->About,SIGNAL(clicked(bool)),this,SLOT(AboutClicked()));
+    connect(ui->Dump,SIGNAL(clicked(bool)),this,SLOT(DumpClicked()));
 }
 
 MainWidget::~MainWidget() {
@@ -121,4 +122,12 @@ void MainWidget::mouseMoveEvent(QMouseEvent *event) {
 
 void MainWidget::mouseReleaseEvent(QMouseEvent*) {
     dragging=false;
+}
+
+void MainWidget::DumpClicked() {
+    QString path(QFileDialog::getSaveFileName(this,"Where to dump?",QString(),"Log (*.log)"));
+    if (path!="") {
+        Log::dump(path);
+        ui->Dump->setEnabled(false);
+    }
 }

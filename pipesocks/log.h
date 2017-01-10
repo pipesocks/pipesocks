@@ -26,9 +26,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cstdio>
 
 class Log {
+private:
+    static FILE *fp;
 public:
     static void log(const QString &message);
     static void log(const QAbstractSocket *socket,const QString &message);
+    static void dump(const QString &path);
 };
 
 #endif // LOG_H
