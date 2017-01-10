@@ -27,7 +27,6 @@ void Log::log(const QString &message) {
 
 void Log::log(const QAbstractSocket *socket,const QString &message) {
     log(socket->peerAddress().toString().mid(7)+':'+QString::number(socket->peerPort())+' '+message);
-    fflush(fp);
 }
 
 void Log::dump(const QString &path) {
