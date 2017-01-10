@@ -27,7 +27,6 @@ Pump::Pump(qintptr handle,const QString &Password,QObject *parent):QObject(paren
     usock=NULL;
     CHost=csock->peerAddress();
     CPort=csock->peerPort();
-    deleted=false;
     status=Initiated;
     Log::log(csock,"connection established");
 }
@@ -77,14 +76,19 @@ void Pump::ServerRecv(const QByteArray &Data) {
 }
 
 void Pump::EndSession() {
-    if (ssock)
+    if (csock->state()==QAbstractSocket::ConnectedState) {
+        Log::log(CHost.toString().mid(7)+':'+QString::number(CPort)+" server closed the connection");
+    }
+    if (ssock) {
+        if (ssock->state()==QAbstractSocket::ConnectedState) {
+            Log::log(CHost.toString().mid(7)+':'+QString::number(CPort)+" client closed the connection");
+        }
         ssock->disconnectFromHost();
+    }
     csock->disconnectFromHost();
-    if (!deleted&&csock->state()==QAbstractSocket::UnconnectedState&&(ssock==NULL||ssock->state()==QAbstractSocket::UnconnectedState)) {
-        deleted=true;
+    if (csock->state()==QAbstractSocket::UnconnectedState&&(ssock==NULL||ssock->state()==QAbstractSocket::UnconnectedState)) {
         if (usock)
             usock->close();
-        Log::log(CHost.toString().mid(7)+':'+QString::number(CPort)+" disconnected");
         deleteLater();
     }
 }

@@ -51,7 +51,6 @@ private:
     UdpSocket *usock;
     QHostAddress UHost,CHost;
     unsigned short UPort,CPort;
-    bool deleted;
     QByteArray PAC();
     QPair<QString,unsigned short>toNormal(const QByteArray &SOCKS5);
     QByteArray toSOCKS5(const QHostAddress &Host,unsigned short Port);

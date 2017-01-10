@@ -30,7 +30,6 @@ Tap::Tap(qintptr handle,const QString &RemoteHost,unsigned short RemotePort,cons
     usock=NULL;
     CHost=csock->peerAddress();
     CPort=csock->peerPort();
-    deleted=false;
     status=Initiated;
     Log::log(csock,"connection established");
 }
@@ -136,13 +135,17 @@ void Tap::ServerRecv(const QByteArray &Data) {
 }
 
 void Tap::EndSession() {
+    if (csock->state()==QAbstractSocket::ConnectedState) {
+        Log::log(CHost.toString().mid(7)+':'+QString::number(CPort)+" server closed the connection");
+    }
+    if (ssock->state()==QAbstractSocket::ConnectedState) {
+        Log::log(CHost.toString().mid(7)+':'+QString::number(CPort)+" client closed the connection");
+    }
     csock->disconnectFromHost();
     ssock->disconnectFromHost();
-    if (!deleted&&ssock->state()==QAbstractSocket::UnconnectedState&&csock->state()==QAbstractSocket::UnconnectedState) {
-        deleted=true;
+    if (ssock->state()==QAbstractSocket::UnconnectedState&&csock->state()==QAbstractSocket::UnconnectedState) {
         if (usock)
             usock->close();
-        Log::log(CHost.toString().mid(7)+':'+QString::number(CPort)+" disconnected");
         deleteLater();
     }
 }
