@@ -32,6 +32,25 @@ MainWidget::MainWidget(QWidget *parent):QWidget(parent),ui(new Ui::MainWidget) {
     connect(ui->Start,SIGNAL(clicked(bool)),this,SLOT(StartClicked()));
     connect(ui->About,SIGNAL(clicked(bool)),this,SLOT(AboutClicked()));
     connect(ui->Dump,SIGNAL(clicked(bool)),this,SLOT(DumpClicked()));
+    settings=new QSettings("yvbbrjdr","pipesocks",this);
+    if (settings->contains("pipesocks/version")&&Version::CheckVersion(settings->value("pipesocks/version").toString())) {
+        settings->beginGroup("default");
+        QString type(settings->value("type").toString());
+        if (type=="pump") {
+            ui->Pump->setChecked(true);
+        } else if (type=="pipe") {
+            ui->Pipe->setChecked(true);
+        } else if (type=="tap") {
+            ui->Tap->setChecked(true);
+        }
+        ui->RemoteHost->setText(settings->value("remotehost").toString());
+        ui->RemotePort->setText(settings->value("remoteport").toString());
+        ui->LocalPort->setText(settings->value("localport").toString());
+        ui->Password->setText(settings->value("password").toString());
+        settings->endGroup();
+    } else {
+        settings->clear();
+    }
 }
 
 MainWidget::~MainWidget() {
@@ -104,6 +123,20 @@ void MainWidget::closeEvent(QCloseEvent*) {
         server->close();
         server->deleteLater();
     }
+    settings->setValue("pipesocks/version",Version::GetVersion());
+    settings->beginGroup("default");
+    if (ui->Pump->isChecked()) {
+        settings->setValue("type","pump");
+    } else if (ui->Pipe->isChecked()) {
+        settings->setValue("type","pipe");
+    } else if (ui->Tap->isChecked()) {
+        settings->setValue("type","tap");
+    }
+    settings->setValue("remotehost",ui->RemoteHost->text());
+    settings->setValue("remoteport",ui->RemotePort->text());
+    settings->setValue("localport",ui->LocalPort->text());
+    settings->setValue("password",ui->Password->text());
+    settings->endGroup();
 }
 
 void MainWidget::AboutClicked() {

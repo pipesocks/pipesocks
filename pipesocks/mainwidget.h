@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QFileDialog>
+#include <QSettings>
+#include "version.h"
 #include "aboutdialog.h"
 #include "tcpserver.h"
 #include "log.h"
@@ -42,6 +44,7 @@ private:
     AboutDialog *about;
     bool dragging;
     QPoint oripos;
+    QSettings *settings;
     void ShowError();
 private slots:
     void PumpSelected();
