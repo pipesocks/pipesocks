@@ -25,6 +25,9 @@ MainWidget::MainWidget(QWidget *parent):QWidget(parent),ui(new Ui::MainWidget) {
     about=new AboutDialog(this);
     server=NULL;
     dragging=false;
+    trayicon=new QSystemTrayIcon(this);
+    connect(trayicon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this,SLOT(Restore()));
+    trayicon->show();
     ui->RemoteHost->setFocus();
     connect(ui->Pump,SIGNAL(clicked(bool)),this,SLOT(PumpSelected()));
     connect(ui->Pipe,SIGNAL(clicked(bool)),this,SLOT(PipeSelected()));
@@ -163,4 +166,16 @@ void MainWidget::DumpClicked() {
         Log::dump(path);
         ui->Dump->setEnabled(false);
     }
+}
+
+void MainWidget::changeEvent(QEvent *event) {
+    if (event->type()==QEvent::WindowStateChange&&windowState()&Qt::WindowMinimized) {
+        hide();
+        trayicon->showMessage("Pipesocks is working on the background","Click the icon to restore");
+    }
+}
+
+void MainWidget::Restore() {
+    show();
+    setWindowState(Qt::WindowNoState);
 }

@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QSettings>
+#include <QSystemTrayIcon>
 #include "version.h"
 #include "aboutdialog.h"
 #include "tcpserver.h"
@@ -45,6 +46,7 @@ private:
     bool dragging;
     QPoint oripos;
     QSettings *settings;
+    QSystemTrayIcon *trayicon;
     void ShowError();
 private slots:
     void PumpSelected();
@@ -53,11 +55,13 @@ private slots:
     void StartClicked();
     void AboutClicked();
     void DumpClicked();
+    void Restore();
 protected:
     void closeEvent(QCloseEvent*);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent*);
+    void changeEvent(QEvent *event);
 };
 
 #endif // MAINWIDGET_H
