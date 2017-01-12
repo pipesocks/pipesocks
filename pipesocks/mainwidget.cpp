@@ -54,6 +54,7 @@ MainWidget::MainWidget(QWidget *parent):QWidget(parent),ui(new Ui::MainWidget) {
         ui->LocalPort->setText(settings->value("localport").toString());
         ui->Password->setText(settings->value("password").toString());
         settings->endGroup();
+        ui->Start->setFocus();
     } else {
         settings->clear();
     }
