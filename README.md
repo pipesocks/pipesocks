@@ -27,7 +27,7 @@ Or
 
 ## Deployment
 ### General
-Download & install Qt Creator with Qt (above 5) and libsodium. Open the project with Qt Creator, set include path and link path and compile. 
+Download & install Qt Creator with Qt (above 5) and libsodium. Open the project with Qt Creator, set include path and link path and compile. If you are not under macOS, you'll need to copy win.ico from icons folder to the binary's folder so that system tray icon works correctly. 
 
 ### Ubuntu Server
 Since most Ubuntu servers doesn't hold a GUI, here is the way to deploy pipesocks in them. 
