@@ -43,11 +43,11 @@ MainWidget::MainWidget(QWidget *parent):QWidget(parent),ui(new Ui::MainWidget) {
         settings->beginGroup("default");
         QString type(settings->value("type").toString());
         if (type=="pump") {
-            ui->Pump->setChecked(true);
+            ui->Pump->click();
         } else if (type=="pipe") {
-            ui->Pipe->setChecked(true);
+            ui->Pipe->click();
         } else if (type=="tap") {
-            ui->Tap->setChecked(true);
+            ui->Tap->click();
         }
         ui->RemoteHost->setText(settings->value("remotehost").toString());
         ui->RemotePort->setText(settings->value("remoteport").toString());
