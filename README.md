@@ -29,6 +29,17 @@ Or
 ### General
 Download & install Qt Creator with Qt (above 5) and libsodium. Open the project with Qt Creator, set include path and link path and compile. 
 
+### Ubuntu Server
+Since most Ubuntu servers doesn't hold a GUI, here is the way to deploy pipesocks in them. 
+
+Type this command in your terminal: 
+
+```bash
+curl https://raw.githubusercontent.com/pipesocks/pipesocks/stable/install.sh | sh
+```
+
+And you'll get a pipesocks binary file. 
+
 ### macOS
 To install libsodium, you can type these commands in your terminal: 
 
