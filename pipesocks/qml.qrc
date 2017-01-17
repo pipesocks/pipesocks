@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Main.qml</file>
+        <file>Pipesocks.ui.qml</file>
+        <file>About.ui.qml</file>
+        <file>icons/avatar.png</file>
+        <file>icons/origin.png</file>
+    </qresource>
+</RCC>
