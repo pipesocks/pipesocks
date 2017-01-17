@@ -13,11 +13,11 @@ SOURCES += main.cpp \
     pipe.cpp \
     tap.cpp \
     pump.cpp \
-    mainwidget.cpp \
     version.cpp \
     gfwlist.cpp \
     udpsocket.cpp \
-    log.cpp
+    log.cpp \
+    mainform.cpp
 
 HEADERS += tcpsocket.h \
     securesocket.h \
@@ -25,11 +25,11 @@ HEADERS += tcpsocket.h \
     pipe.h \
     tap.h \
     pump.h \
-    mainwidget.h \
     version.h \
     gfwlist.h \
     udpsocket.h \
-    log.h
+    log.h \
+    mainform.h
 
 osx {
     LIBS += -L/usr/local/lib/
@@ -40,7 +40,5 @@ osx {
 win32: RC_ICONS = icons/win.ico
 
 LIBS += -lsodium
-
-FORMS +=
 
 RESOURCES += qml.qrc

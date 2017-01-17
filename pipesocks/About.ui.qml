@@ -24,12 +24,12 @@ Item {
     }
 
     Label {
-        id: information
+        id: info
+        objectName: "info"
         x: 16
         y: 157
         width: 292
         height: 121
-        text: qsTr("pipesocks\nPowered by yvbbrjdr\nIcon depicted by Rena\nLicensed by GPL v3")
         font.pointSize: 20
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter

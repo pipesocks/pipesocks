@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include "tcpserver.h"
+#include "mainform.h"
 
 QString FindArg(const QStringList &Arguments,char Letter) {
     int index=Arguments.indexOf(QString('-')+Letter);
@@ -38,6 +39,7 @@ int main(int argc,char **argv) {
         QQuickStyle::setStyle("Material");
         QQmlApplicationEngine engine;
         engine.load(QUrl(QLatin1String("qrc:/Main.qml")));
+        new MainForm(engine.rootObjects().value(0));
         return a.exec();
     } else {
         QCoreApplication a(argc,argv);

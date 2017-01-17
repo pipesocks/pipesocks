@@ -9,6 +9,7 @@ Item {
 
     RadioButton {
         id: pump
+        objectName: "pump"
         x: 16
         y: 8
         width: 93
@@ -18,6 +19,7 @@ Item {
 
     RadioButton {
         id: pipe
+        objectName: "pipe"
         x: 115
         y: 8
         width: 93
@@ -27,6 +29,7 @@ Item {
 
     RadioButton {
         id: tap
+        objectName: "tap"
         x: 215
         y: 8
         width: 93
@@ -47,6 +50,7 @@ Item {
 
     TextField {
         id: remoteHost
+        objectName: "remoteHost"
         x: 108
         y: 54
         width: 200
@@ -65,6 +69,7 @@ Item {
 
     TextField {
         id: remotePort
+        objectName: "remotePort"
         x: 108
         y: 100
         width: 200
@@ -84,6 +89,7 @@ Item {
 
     TextField {
         id: localPort
+        objectName: "localPort"
         x: 108
         y: 146
         width: 200
@@ -103,6 +109,7 @@ Item {
 
     TextField {
         id: password
+        objectName: "password"
         x: 108
         y: 192
         width: 200
@@ -113,6 +120,7 @@ Item {
 
     Button {
         id: start
+        objectName: "start"
         x: 16
         y: 238
         width: 143
@@ -122,6 +130,7 @@ Item {
 
     Button {
         id: dump
+        objectName: "dump"
         x: 165
         y: 238
         width: 143
