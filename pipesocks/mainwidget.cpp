@@ -14,7 +14,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+
 
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
@@ -58,31 +58,6 @@ MainWidget::MainWidget(QWidget *parent):QWidget(parent),ui(new Ui::MainWidget) {
     } else {
         settings->clear();
     }
-}
-
-MainWidget::~MainWidget() {
-    delete ui;
-}
-
-void MainWidget::PumpSelected() {
-    ui->RemoteHost->setEnabled(false);
-    ui->RemotePort->setEnabled(false);
-    ui->LocalPort->setEnabled(true);
-    ui->Password->setEnabled(true);
-}
-
-void MainWidget::PipeSelected() {
-    ui->RemoteHost->setEnabled(true);
-    ui->RemotePort->setEnabled(true);
-    ui->LocalPort->setEnabled(true);
-    ui->Password->setEnabled(false);
-}
-
-void MainWidget::TapSelected() {
-    ui->RemoteHost->setEnabled(true);
-    ui->RemotePort->setEnabled(true);
-    ui->LocalPort->setEnabled(true);
-    ui->Password->setEnabled(true);
 }
 
 void MainWidget::ShowError() {
@@ -146,24 +121,6 @@ void MainWidget::closeEvent(QCloseEvent*) {
     settings->endGroup();
 }
 
-void MainWidget::AboutClicked() {
-    about->show();
-}
-
-void MainWidget::mousePressEvent(QMouseEvent *event) {
-    dragging=true;
-    oripos=event->pos();
-}
-
-void MainWidget::mouseMoveEvent(QMouseEvent *event) {
-    if (dragging)
-        move(pos()+event->pos()-oripos);
-}
-
-void MainWidget::mouseReleaseEvent(QMouseEvent*) {
-    dragging=false;
-}
-
 void MainWidget::DumpClicked() {
     QString path(QFileDialog::getSaveFileName(this,"Where to dump?",QString(),"Log (*.log)"));
     if (path!="") {
@@ -185,3 +142,4 @@ void MainWidget::Restore() {
     setWindowState(Qt::WindowNoState);
     trayicon->setVisible(false);
 }
+*/

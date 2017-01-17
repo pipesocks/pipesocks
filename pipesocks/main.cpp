@@ -17,9 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <QCoreApplication>
-#include <QApplication>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQuickStyle>
 #include "tcpserver.h"
-#include "mainwidget.h"
 
 QString FindArg(const QStringList &Arguments,char Letter) {
     int index=Arguments.indexOf(QString('-')+Letter);
@@ -32,9 +33,11 @@ int main(int argc,char **argv) {
     QString Usage(QString("Usage: %1 [pump|pipe|tap] <arguments>\nArguments:\n-H Remote Host\n-P Remote Port\n-p Local Port\n-k Password\n").arg(QString(*argv)));
     if (argc==1) {
         printf("%s",Usage.toStdString().c_str());
-        QApplication a(argc,argv);
-        MainWidget mainwidget;
-        mainwidget.show();
+        QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+        QGuiApplication a(argc,argv);
+        QQuickStyle::setStyle("Material");
+        QQmlApplicationEngine engine;
+        engine.load(QUrl(QLatin1String("qrc:/Main.qml")));
         return a.exec();
     } else {
         QCoreApplication a(argc,argv);

@@ -1,6 +1,6 @@
 # This project is created by yvbbrjdr
 
-QT += core gui widgets network
+QT += core qml quick quickcontrols2 network
 
 TARGET = pipesocks
 
@@ -14,7 +14,6 @@ SOURCES += main.cpp \
     tap.cpp \
     pump.cpp \
     mainwidget.cpp \
-    aboutdialog.cpp \
     version.cpp \
     gfwlist.cpp \
     udpsocket.cpp \
@@ -27,7 +26,6 @@ HEADERS += tcpsocket.h \
     tap.h \
     pump.h \
     mainwidget.h \
-    aboutdialog.h \
     version.h \
     gfwlist.h \
     udpsocket.h \
@@ -43,5 +41,6 @@ win32: RC_ICONS = icons/win.ico
 
 LIBS += -lsodium
 
-FORMS += mainwidget.ui \
-    aboutdialog.ui
+FORMS +=
+
+RESOURCES += qml.qrc
