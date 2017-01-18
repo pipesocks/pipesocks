@@ -46,6 +46,7 @@ MainForm::MainForm(QObject *rootObject,QObject *parent):QObject(parent) {
     connect(window,SIGNAL(windowStateChanged(Qt::WindowState)),this,SLOT(windowStateChanged(Qt::WindowState)));
     trayicon=new QSystemTrayIcon(this);
     trayicon->setIcon(QIcon(":/icons/win.ico"));
+    trayicon->show();
     connect(trayicon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),window,SLOT(show()));
     connect(trayicon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),window,SLOT(requestActivate()));
     settings=new QSettings("yvbbrjdr","pipesocks",this);
@@ -167,9 +168,6 @@ void MainForm::fileChosen(QUrl path) {
 
 void MainForm::windowStateChanged(Qt::WindowState state) {
     if (state==Qt::WindowMinimized) {
-        trayicon->show();
         QMetaObject::invokeMethod(window,"hide");
-    } else if (state==Qt::WindowNoState) {
-        trayicon->hide();
     }
 }
