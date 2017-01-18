@@ -155,6 +155,7 @@ void MainForm::closing() {
     settings->setValue("localport",localPort->property("text").toString());
     settings->setValue("password",password->property("text").toString());
     settings->endGroup();
+    trayicon->hide();
 }
 
 void MainForm::ShowError() {
