@@ -5,5 +5,6 @@
         <file>About.ui.qml</file>
         <file>icons/avatar.png</file>
         <file>icons/origin.png</file>
+        <file>icons/win.ico</file>
     </qresource>
 </RCC>

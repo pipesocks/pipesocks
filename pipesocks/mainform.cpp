@@ -43,6 +43,11 @@ MainForm::MainForm(QObject *rootObject,QObject *parent):QObject(parent) {
     connect(dump,SIGNAL(clicked()),this,SLOT(dumpClicked()));
     connect(window,SIGNAL(closing(QQuickCloseEvent*)),this,SLOT(closing()));
     connect(window,SIGNAL(fileChosen(QUrl)),this,SLOT(fileChosen(QUrl)));
+    connect(window,SIGNAL(windowStateChanged(Qt::WindowState)),this,SLOT(windowStateChanged(Qt::WindowState)));
+    trayicon=new QSystemTrayIcon(this);
+    trayicon->setIcon(QIcon(":/icons/win.ico"));
+    connect(trayicon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),window,SLOT(show()));
+    connect(trayicon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),window,SLOT(requestActivate()));
     settings=new QSettings("yvbbrjdr","pipesocks",this);
     if (settings->contains("pipesocks/version")&&Version::CheckVersion(settings->value("pipesocks/version").toString())) {
         settings->beginGroup("default");
@@ -158,4 +163,13 @@ void MainForm::ShowError() {
 void MainForm::fileChosen(QUrl path) {
     Log::dump(path.toString().mid(7));
     dump->setProperty("enabled",false);
+}
+
+void MainForm::windowStateChanged(Qt::WindowState state) {
+    if (state==Qt::WindowMinimized) {
+        trayicon->show();
+        QMetaObject::invokeMethod(window,"hide");
+    } else if (state==Qt::WindowNoState) {
+        trayicon->hide();
+    }
 }

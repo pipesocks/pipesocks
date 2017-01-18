@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include <QVariant>
 #include <QSettings>
+#include <QSystemTrayIcon>
 #include "log.h"
 #include "version.h"
 #include "tcpserver.h"
@@ -38,6 +39,7 @@ private:
     void ShowError();
     TcpServer *server;
     QSettings *settings;
+    QSystemTrayIcon *trayicon;
 private slots:
     void pumpClicked();
     void pipeClicked();
@@ -46,6 +48,7 @@ private slots:
     void dumpClicked();
     void closing();
     void fileChosen(QUrl path);
+    void windowStateChanged(Qt::WindowState state);
 };
 
 #endif // MAINFORM_H
