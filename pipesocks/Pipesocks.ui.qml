@@ -71,7 +71,6 @@ Item {
         x: 108
         y: 54
         width: 200
-        height: 40
     }
 
     Label {
@@ -90,7 +89,6 @@ Item {
         x: 108
         y: 100
         width: 200
-        height: 40
         text: qsTr("1080")
     }
 
@@ -110,7 +108,6 @@ Item {
         x: 108
         y: 146
         width: 200
-        height: 40
         text: qsTr("1080")
     }
 
@@ -130,7 +127,6 @@ Item {
         x: 108
         y: 192
         width: 200
-        height: 40
         echoMode: TextInput.Password
         placeholderText: qsTr("Optional")
     }
