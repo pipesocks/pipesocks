@@ -1,6 +1,6 @@
 # This project is created by yvbbrjdr
 
-QT += core widgets qml quick quickcontrols2 network
+QT += core widgets qml quickcontrols2 network
 
 TARGET = pipesocks
 

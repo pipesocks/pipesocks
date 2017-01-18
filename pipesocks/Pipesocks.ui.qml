@@ -30,7 +30,6 @@ Item {
         x: 16
         y: 8
         width: 93
-        height: 40
         text: qsTr("Pump")
     }
 
@@ -40,7 +39,6 @@ Item {
         x: 115
         y: 8
         width: 93
-        height: 40
         text: qsTr("Pipe")
     }
 
@@ -50,7 +48,6 @@ Item {
         x: 215
         y: 8
         width: 93
-        height: 40
         text: qsTr("Tap")
         checked: true
     }
@@ -60,7 +57,6 @@ Item {
         x: 16
         y: 66
         width: 86
-        height: 16
         text: qsTr("Remote Host: ")
         horizontalAlignment: Text.AlignRight
     }
@@ -78,7 +74,6 @@ Item {
         x: 19
         y: 112
         width: 83
-        height: 16
         text: qsTr("Remote Port: ")
         horizontalAlignment: Text.AlignRight
     }
@@ -97,7 +92,6 @@ Item {
         x: 33
         y: 158
         width: 69
-        height: 16
         text: qsTr("Local Port: ")
         horizontalAlignment: Text.AlignRight
     }
@@ -116,7 +110,6 @@ Item {
         x: 36
         y: 204
         width: 66
-        height: 16
         text: qsTr("Password: ")
         horizontalAlignment: Text.AlignRight
     }
@@ -137,7 +130,6 @@ Item {
         x: 16
         y: 238
         width: 143
-        height: 40
         text: qsTr("Start")
     }
 
@@ -147,7 +139,6 @@ Item {
         x: 165
         y: 238
         width: 143
-        height: 40
         text: qsTr("Dump")
     }
 }
