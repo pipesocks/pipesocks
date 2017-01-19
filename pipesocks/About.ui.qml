@@ -29,6 +29,8 @@ Item {
         y: 8
         width: 143
         height: 143
+        sourceSize.height: 143
+        sourceSize.width: 143
         source: "icons/origin.png"
     }
 
@@ -38,6 +40,8 @@ Item {
         y: 8
         width: 143
         height: 143
+        sourceSize.height: 143
+        sourceSize.width: 143
         source: "icons/avatar.png"
     }
 
