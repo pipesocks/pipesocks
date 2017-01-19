@@ -156,6 +156,7 @@ void MainForm::closing() {
     settings->setValue("password",password->property("text").toString());
     settings->endGroup();
     trayicon->hide();
+    QGuiApplication::exit();
 }
 
 void MainForm::ShowError() {

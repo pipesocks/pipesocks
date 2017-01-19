@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QVariant>
 #include <QSettings>
 #include <QSystemTrayIcon>
+#include <QGuiApplication>
 #include "log.h"
 #include "version.h"
 #include "tcpserver.h"
