@@ -35,7 +35,8 @@ private:
     QByteArray Encrypt(const QByteArray &Data);
     QByteArray Decrypt(const QByteArray &Data);
     void SendUnencrypted(const QByteArray &Data);
-    unsigned char XORKey;
+    QByteArray XORWithPassword(const QByteArray &Data);
+    QByteArray Password;
 private slots:
     void StateChangedSlot(QAbstractSocket::SocketState state);
     void SendDataSlot(const QByteArray &Data);
