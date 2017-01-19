@@ -27,7 +27,7 @@ Or
 
 ## Deployment
 ### General
-Download & install Qt Creator with Qt (above 5) and libsodium. Open the project with Qt Creator, set include path and link path and compile. 
+Download & install Qt Creator with Qt (above 5.7) and libsodium. Open the project with Qt Creator, set include path and link path and compile. 
 
 ### Ubuntu Server
 Since most Ubuntu servers doesn't hold a GUI, here is the way to deploy pipesocks in them. 
