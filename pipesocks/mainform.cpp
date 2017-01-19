@@ -35,7 +35,7 @@ MainForm::MainForm(QObject *rootObject,QObject *parent):QObject(parent) {
     info=about->findChild<QObject*>("info");
     server=NULL;
     headerText->setProperty("text","pipesocks "+Version::GetVersion());
-    info->setProperty("text","pipesocks "+Version::GetVersion()+"\nPowered by yvbbrjdr\nIcon depicted by Rena\nLicensed by GPL v3");
+    info->setProperty("text","pipesocks "+Version::GetVersion()+"\nCopyright (C) 2017  yvbbrjdr\nIcon by Rena\nQt by The Qt Company Ltd.\nlibsodium by jedisct1\nLicensed by GPL v3");
     connect(pump,SIGNAL(clicked()),this,SLOT(pumpClicked()));
     connect(pipe,SIGNAL(clicked()),this,SLOT(pipeClicked()));
     connect(tap,SIGNAL(clicked()),this,SLOT(tapClicked()));

@@ -48,7 +48,7 @@ Item {
         y: 157
         width: 292
         height: 121
-        font.pointSize: 20
+        font.pointSize: 14
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
     }
