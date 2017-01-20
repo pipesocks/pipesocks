@@ -35,6 +35,7 @@ ApplicationWindow {
     Material.accent: Material.Cyan
     Material.primary: Material.BlueGrey
     font.family: qsTr("Roboto")
+    color: Qt.rgba(0.188235,0.188235,0.188235,0.8)
 
     function showNotFilled() {
         notFilled.visible=true
@@ -99,6 +100,9 @@ ApplicationWindow {
     footer: TabBar {
         id: tabBar
         currentIndex: swipeView.currentIndex
+        background: Rectangle {
+            color: qsTr("transparent")
+        }
         TabButton {
             text: qsTr("pipesocks")
         }
