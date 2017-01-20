@@ -32,6 +32,7 @@ public:
     static void log(const QString &message);
     static void log(const QAbstractSocket *socket,const QString &message);
     static void dump(const QString &path);
+    static void undump();
 };
 
 #endif // LOG_H

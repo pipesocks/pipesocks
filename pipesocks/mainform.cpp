@@ -96,44 +96,64 @@ void MainForm::tapClicked() {
 }
 
 void MainForm::startClicked() {
-    if (pump->property("checked").toBool()) {
-        if (localPort->property("text").toString()=="") {
-            ShowError();
+    if (start->property("text")=="Start") {
+        if (pump->property("checked").toBool()) {
+            if (localPort->property("text").toString()=="") {
+                ShowError();
+                return;
+            }
+            server=new TcpServer(TcpServer::PumpServer,remoteHost->property("text").toString(),remotePort->property("text").toString().toUShort(),password->property("text").toString(),this);
+        } else if (pipe->property("checked").toBool()) {
+            if (remoteHost->property("text").toString()==""||remotePort->property("text").toString()==""||localPort->property("text").toString()=="") {
+                ShowError();
+                return;
+            }
+            server=new TcpServer(TcpServer::PipeServer,remoteHost->property("text").toString(),remotePort->property("text").toString().toUShort(),password->property("text").toString(),this);
+        } else if (tap->property("checked").toBool()) {
+            if (remoteHost->property("text").toString()==""||remotePort->property("text").toString()==""||localPort->property("text").toString()=="") {
+                ShowError();
+                return;
+            }
+            server=new TcpServer(TcpServer::TapClient,remoteHost->property("text").toString(),remotePort->property("text").toString().toUShort(),password->property("text").toString(),this);
+        }
+        if (!server->listen(QHostAddress::Any,localPort->property("text").toString().toUInt())) {
+            QMetaObject::invokeMethod(window,"showFailedBind");
+            server->deleteLater();
+            server=NULL;
             return;
         }
-        server=new TcpServer(TcpServer::PumpServer,remoteHost->property("text").toString(),remotePort->property("text").toString().toUShort(),password->property("text").toString(),this);
-    } else if (pipe->property("checked").toBool()) {
-        if (remoteHost->property("text").toString()==""||remotePort->property("text").toString()==""||localPort->property("text").toString()=="") {
-            ShowError();
-            return;
-        }
-        server=new TcpServer(TcpServer::PipeServer,remoteHost->property("text").toString(),remotePort->property("text").toString().toUShort(),password->property("text").toString(),this);
-    } else if (tap->property("checked").toBool()) {
-        if (remoteHost->property("text").toString()==""||remotePort->property("text").toString()==""||localPort->property("text").toString()=="") {
-            ShowError();
-            return;
-        }
-        server=new TcpServer(TcpServer::TapClient,remoteHost->property("text").toString(),remotePort->property("text").toString().toUShort(),password->property("text").toString(),this);
-    }
-    if (!server->listen(QHostAddress::Any,localPort->property("text").toString().toUInt())) {
-        QMetaObject::invokeMethod(window,"showFailedBind");
+        pump->setProperty("enabled",false);
+        pipe->setProperty("enabled",false);
+        tap->setProperty("enabled",false);
+        remoteHost->setProperty("enabled",false);
+        remotePort->setProperty("enabled",false);
+        localPort->setProperty("enabled",false);
+        password->setProperty("enabled",false);
+        start->setProperty("text","Stop");
+        headerText->setProperty("text","Enjoy!");
+    } else if (start->property("text")=="Stop") {
+        server->close();
         server->deleteLater();
         server=NULL;
-        return;
+        pump->setProperty("enabled",true);
+        pipe->setProperty("enabled",true);
+        tap->setProperty("enabled",true);
+        remoteHost->setProperty("enabled",true);
+        remotePort->setProperty("enabled",true);
+        localPort->setProperty("enabled",true);
+        password->setProperty("enabled",true);
+        start->setProperty("text","Start");
+        headerText->setProperty("text","pipesocks "+Version::GetVersion());
     }
-    pump->setProperty("enabled",false);
-    pipe->setProperty("enabled",false);
-    tap->setProperty("enabled",false);
-    remoteHost->setProperty("enabled",false);
-    remotePort->setProperty("enabled",false);
-    localPort->setProperty("enabled",false);
-    password->setProperty("enabled",false);
-    start->setProperty("enabled",false);
-    headerText->setProperty("text","Enjoy!");
 }
 
 void MainForm::dumpClicked() {
-    QMetaObject::invokeMethod(window,"showFileDialog");
+    if (dump->property("text")=="Dump") {
+        QMetaObject::invokeMethod(window,"showFileDialog");
+    } else if (dump->property("text")=="Undump") {
+        Log::undump();
+        dump->setProperty("text","Dump");
+    }
 }
 
 void MainForm::closing() {
@@ -165,7 +185,7 @@ void MainForm::ShowError() {
 
 void MainForm::fileChosen(QUrl path) {
     Log::dump(path.toString().mid(7));
-    dump->setProperty("enabled",false);
+    dump->setProperty("text","Undump");
 }
 
 void MainForm::windowStateChanged(Qt::WindowState state) {

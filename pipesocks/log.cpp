@@ -32,3 +32,9 @@ void Log::log(const QAbstractSocket *socket,const QString &message) {
 void Log::dump(const QString &path) {
     fp=fopen(path.toLocal8Bit().data(),"w");
 }
+
+void Log::undump() {
+    fflush(fp);
+    fclose(fp);
+    fp=stdout;
+}
