@@ -26,36 +26,43 @@ SecureSocket::SecureSocket(const QString &Password,QObject *parent):TcpSocket(pa
     this->Password=Password.toLocal8Bit();
 }
 
-QByteArray SecureSocket::XORWithPassword(const QByteArray &Data) {
-    if (Password.size()==0)
+QByteArray SecureSocket::XOR(const QByteArray &Data,const QByteArray &Key) {
+    if (Key.size()==0)
         return Data;
     QByteArray ret=Data;
     for (int i=0;i<ret.size();++i)
-        ret.data()[i]^=Password[i%Password.size()];
+        ret.data()[i]^=Key[i%Key.size()];
     return ret;
+}
+
+QByteArray SecureSocket::XOR(const QByteArray &Data,const QByteArray &Key1,const QByteArray &Key2) {
+    return XOR(XOR(Data,Key1),Key2);
 }
 
 void SecureSocket::StateChangedSlot(QAbstractSocket::SocketState state) {
     if (state==ConnectedState) {
+        QByteArray nonce(1,randombytes_random());
         QByteArray prefix(2,0);
-        unsigned int l=randombytes_uniform(4000);
+        unsigned int l=randombytes_uniform(900);
         QByteArray garbage(l,0);
         randombytes_buf(garbage.data(),l);
-        l+=crypto_box_PUBLICKEYBYTES+2;
+        l+=crypto_box_PUBLICKEYBYTES+3;
         prefix[0]=(unsigned char)(l>>8);
         prefix[1]=(unsigned char)l;
-        write(XORWithPassword(prefix)+garbage+XORWithPassword(LocalPubKey));
+        write(nonce+XOR(prefix,Password,nonce)+garbage+XOR(LocalPubKey,Password));
     }
 }
 
 void SecureSocket::SendUnencrypted(const QByteArray &Data) {
-    QByteArray prefix(3,0);
+    QByteArray nonce(1,randombytes_random());
+    QByteArray prefix(4,0);
     QByteArray encrypted(Encrypt(Data));
-    unsigned int l=encrypted.length()+3;
-    prefix[0]=(unsigned char)(l>>16);
-    prefix[1]=(unsigned char)(l>>8);
-    prefix[2]=(unsigned char)l;
-    write(XORWithPassword(prefix)+encrypted);
+    unsigned int l=encrypted.length()+5;
+    prefix[0]=(unsigned char)(l>>24);
+    prefix[1]=(unsigned char)(l>>16);
+    prefix[2]=(unsigned char)(l>>8);
+    prefix[3]=(unsigned char)l;
+    write(nonce+XOR(prefix,Password,nonce)+encrypted);
 }
 
 void SecureSocket::SendDataSlot(const QByteArray &Data) {
@@ -70,27 +77,28 @@ void SecureSocket::SendDataSlot(const QByteArray &Data) {
 void SecureSocket::RecvDataSlot() {
     RecvBuffer+=readAll();
     if (RemotePubKey.size()==0) {
-        if (RecvBuffer.length()<2)
+        if (RecvBuffer.length()<3)
             return;
-        QByteArray prefix(XORWithPassword(RecvBuffer.left(2)));
+        QByteArray prefix(XOR(RecvBuffer.mid(1,2),Password,RecvBuffer.left(1)));
         unsigned int l=(unsigned char)prefix[0];
         l=(l<<8)+(unsigned char)prefix[1];
         if ((unsigned int)RecvBuffer.length()<l)
             return;
-        RemotePubKey=XORWithPassword(RecvBuffer.left(l).right(crypto_box_PUBLICKEYBYTES));
+        RemotePubKey=XOR(RecvBuffer.left(l).right(crypto_box_PUBLICKEYBYTES),Password);
         RecvBuffer=RecvBuffer.mid(l);
         for (QList<QByteArray>::iterator it=SendBuffer.begin();it!=SendBuffer.end();++it)
             SendUnencrypted(it.i->t());
         SendBuffer.clear();
     }
-    while (RecvBuffer.length()>=3) {
-        QByteArray prefix(XORWithPassword(RecvBuffer.left(3)));
+    while (RecvBuffer.length()>=5) {
+        QByteArray prefix(XOR(RecvBuffer.mid(1,4),Password,RecvBuffer.left(1)));
         unsigned int l=(unsigned char)prefix[0];
         l=(l<<8)+(unsigned char)prefix[1];
         l=(l<<8)+(unsigned char)prefix[2];
+        l=(l<<8)+(unsigned char)prefix[3];
         if ((unsigned int)RecvBuffer.length()<l)
             return;
-        QByteArray segment(RecvBuffer.left(l).mid(3));
+        QByteArray segment(RecvBuffer.left(l).mid(5));
         RecvBuffer=RecvBuffer.mid(l);
         emit RecvData(Decrypt(segment));
     }
