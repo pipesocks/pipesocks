@@ -34,8 +34,8 @@ ApplicationWindow {
     Material.theme: Material.Dark
     Material.accent: Material.Cyan
     Material.primary: Material.BlueGrey
+    Material.background: Qt.rgba(0.188235,0.188235,0.188235,0.8)
     font.family: qsTr("Roboto")
-    color: Qt.rgba(0.188235,0.188235,0.188235,0.8)
 
     function showNotFilled() {
         notFilled.visible=true
