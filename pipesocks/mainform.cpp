@@ -49,6 +49,10 @@ MainForm::MainForm(QObject *rootObject,QObject *parent):QObject(parent) {
     trayicon->show();
     connect(trayicon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),window,SLOT(show()));
     connect(trayicon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),window,SLOT(requestActivate()));
+    if (QSysInfo::macVersion()==QSysInfo::MV_None) {
+        window->setProperty("color",QColor(48,48,48));
+        window->setProperty("opacity",0.8);
+    }
     settings=new QSettings("yvbbrjdr","pipesocks",this);
     if (settings->contains("pipesocks/version")&&Version::CheckVersion(settings->value("pipesocks/version").toString())) {
         settings->beginGroup("default");
