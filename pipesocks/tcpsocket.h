@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define TCPSOCKET_H
 
 #include <QTcpSocket>
+#include <QNetworkProxy>
 
 class TcpSocket : public QTcpSocket {
     Q_OBJECT

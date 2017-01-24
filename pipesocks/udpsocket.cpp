@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "udpsocket.h"
 
 UdpSocket::UdpSocket(QObject *parent):QUdpSocket(parent) {
+    setProxy(QNetworkProxy::NoProxy);
     connect(this,SIGNAL(readyRead()),this,SLOT(RecvDataSlot()));
     connect(this,SIGNAL(SendData(QString,unsigned short,QByteArray)),this,SLOT(SendDataSlot(QString,unsigned short,QByteArray)));
     bind();

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "tcpsocket.h"
 
 TcpSocket::TcpSocket(QObject *parent):QTcpSocket(parent) {
+    setProxy(QNetworkProxy::NoProxy);
     connect(this,SIGNAL(SendData(QByteArray)),this,SLOT(SendDataSlot(QByteArray)));
     connect(this,SIGNAL(readyRead()),this,SLOT(RecvDataSlot()));
 }

@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QUdpSocket>
 #include <QHostInfo>
+#include <QNetworkProxy>
 
 class UdpSocket : public QUdpSocket {
     Q_OBJECT

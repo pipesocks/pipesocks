@@ -24,6 +24,7 @@ GFWList::GFWList(QObject *parent):QObject(parent) {
     retrieving=available=false;
     timer=new QTimer(this);
     nam=new QNetworkAccessManager(this);
+    nam->setProxy(QNetworkProxy::NoProxy);
     connect(timer,SIGNAL(timeout()),this,SLOT(timeout()));
     connect(nam,SIGNAL(finished(QNetworkReply*)),this,SLOT(ProcessGFWList(QNetworkReply*)));
     timer->start(3600000);
