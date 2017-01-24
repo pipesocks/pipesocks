@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "version.h"
 
-QString Version::ver("2.0");//Change this line everytime you update
+QString Version::ver("2.1");//Change this line everytime you update
 
 QString Version::GetVersion() {
     return ver;

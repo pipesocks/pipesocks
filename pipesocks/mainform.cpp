@@ -188,7 +188,7 @@ void MainForm::ShowError() {
 }
 
 void MainForm::fileChosen(QUrl path) {
-    Log::dump(path.toString().mid(7));
+    Log::dump(path.toLocalFile());
     dump->setProperty("text","Undump");
 }
 
