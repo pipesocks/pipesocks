@@ -66,11 +66,11 @@ void SecureSocket::SendUnencrypted(const QByteArray &Data) {
 void SecureSocket::SendDataSlot(const QByteArray &Data) {
     if (state()==QAbstractSocket::UnconnectedState)
         return;
-    for (int i=0;i<=Data.length()/901;++i) {
+    for (int i=0;i<=Data.length()/2001;++i) {
         if (RemotePubKey.size()==0)
-            SendBuffer.push_back(Data.mid(i*900,900));
+            SendBuffer.push_back(Data.mid(i*2000,2000));
         else
-            SendUnencrypted(Data.mid(i*900,900));
+            SendUnencrypted(Data.mid(i*2000,2000));
     }
 }
 
