@@ -1,5 +1,6 @@
 #!/bin/bash
 sudo apt-get -y install git make build-essential qt5-default qt5-qmake
+sudo rm -R pipesocks
 git clone https://github.com/jedisct1/libsodium.git
 git clone https://github.com/pipesocks/pipesocks.git
 cd libsodium/
