@@ -43,7 +43,7 @@ void SecureSocket::StateChangedSlot(QAbstractSocket::SocketState state) {
     if (state==ConnectedState) {
         QByteArray nonce(1,randombytes_random());
         QByteArray prefix(2,0);
-        unsigned int l=randombytes_uniform(900);
+        unsigned int l=randombytes_uniform(500)+2000;
         QByteArray garbage(l,0);
         randombytes_buf(garbage.data(),l);
         l+=crypto_box_PUBLICKEYBYTES+crypto_generichash_BYTES+3;
