@@ -135,6 +135,20 @@ void MainForm::startClicked() {
         password->setProperty("enabled",false);
         start->setProperty("text","Stop");
         headerText->setProperty("text","Enjoy!");
+        settings->setValue("pipesocks/version",Version::GetVersion());
+        settings->beginGroup("default");
+        if (pump->property("checked").toBool()) {
+            settings->setValue("type","pump");
+        } else if (pipe->property("checked").toBool()) {
+            settings->setValue("type","pipe");
+        } else if (tap->property("checked").toBool()) {
+            settings->setValue("type","tap");
+        }
+        settings->setValue("remotehost",remoteHost->property("text").toString());
+        settings->setValue("remoteport",remotePort->property("text").toString());
+        settings->setValue("localport",localPort->property("text").toString());
+        settings->setValue("password",password->property("text").toString());
+        settings->endGroup();
     } else if (start->property("text")=="Stop") {
         server->close();
         server->deleteLater();
@@ -165,20 +179,6 @@ void MainForm::closing() {
         server->close();
         server->deleteLater();
     }
-    settings->setValue("pipesocks/version",Version::GetVersion());
-    settings->beginGroup("default");
-    if (pump->property("checked").toBool()) {
-        settings->setValue("type","pump");
-    } else if (pipe->property("checked").toBool()) {
-        settings->setValue("type","pipe");
-    } else if (tap->property("checked").toBool()) {
-        settings->setValue("type","tap");
-    }
-    settings->setValue("remotehost",remoteHost->property("text").toString());
-    settings->setValue("remoteport",remotePort->property("text").toString());
-    settings->setValue("localport",localPort->property("text").toString());
-    settings->setValue("password",password->property("text").toString());
-    settings->endGroup();
     trayicon->hide();
     QGuiApplication::exit();
 }
