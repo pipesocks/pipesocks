@@ -193,7 +193,7 @@ void MainForm::fileChosen(QUrl path) {
 }
 
 void MainForm::windowStateChanged(Qt::WindowState state) {
-    if (state==Qt::WindowMinimized) {
+    if (state==Qt::WindowMinimized&&QSysInfo::kernelType()!="linux") {
         QMetaObject::invokeMethod(window,"hide");
     }
 }
