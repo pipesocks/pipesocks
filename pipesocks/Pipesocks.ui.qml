@@ -84,7 +84,7 @@ Item {
         x: 108
         y: 100
         width: 200
-        text: qsTr("1080")
+        text: qsTr("7473")
     }
 
     Label {
@@ -102,7 +102,7 @@ Item {
         x: 108
         y: 146
         width: 200
-        text: qsTr("1080")
+        text: qsTr("7473")
     }
 
     Label {

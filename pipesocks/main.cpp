@@ -46,8 +46,8 @@ int main(int argc,char **argv) {
         QStringList args=a.arguments();
         QString type=args.at(1),RemoteHost=FindArg(args,'H'),Password=FindArg(args,'k');
         unsigned short RemotePort=FindArg(args,'P').toUShort(),LocalPort=FindArg(args,'p').toUShort();
-        RemotePort=(RemotePort==0)?1080:RemotePort;
-        LocalPort=(LocalPort==0)?1080:LocalPort;
+        RemotePort=(RemotePort==0)?7473:RemotePort;
+        LocalPort=(LocalPort==0)?7473:LocalPort;
         TcpServer *server;
         if (type=="pump") {
             server=new TcpServer(TcpServer::PumpServer,RemoteHost,RemotePort,Password);
