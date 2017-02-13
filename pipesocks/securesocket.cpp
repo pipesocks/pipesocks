@@ -26,7 +26,7 @@ SecureSocket::SecureSocket(const QString &Password,bool passive,QObject *parent)
     if ((unsigned int)Password.size()>=crypto_secretbox_KEYBYTES)
         SecretKey=Password.toLocal8Bit().left(crypto_secretbox_KEYBYTES);
     else
-        SecretKey=Password.toLocal8Bit()+QByteArray(crypto_secretbox_KEYBYTES-Password.toLocal8Bit().size(),0x98);
+        SecretKey=Password.toLocal8Bit()+QByteArray(crypto_secretbox_KEYBYTES-Password.toLocal8Bit().size(),(char)0x98);
 }
 
 void SecureSocket::SendEncrypted(const QByteArray &Data) {
