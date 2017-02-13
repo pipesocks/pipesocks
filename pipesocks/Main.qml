@@ -17,10 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick 2.7
-import QtQuick.Controls 1.2
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.1
+import QtQuick.Dialogs 1.2 as Dialogs
 import QtQuick.Controls.Material 2.0
-import QtQuick.Dialogs 1.1
 
 ApplicationWindow {
     width: 324
@@ -51,7 +50,7 @@ ApplicationWindow {
 
     signal fileChosen(url path)
 
-    FileDialog {
+    Dialogs.FileDialog {
         id: fileDialog
         title: "Where to dump?"
         folder: shortcuts.home
@@ -60,18 +59,26 @@ ApplicationWindow {
         onAccepted: fileChosen(fileDialog.fileUrl)
     }
 
-    MessageDialog {
+    Dialog {
         id: notFilled
+        x: (parent.width-width)>>1
+        y: (parent.height-height)>>1
         title: "Error"
-        text: "Blanks must be filled."
-        icon: StandardIcon.Critical
+        standardButtons: Dialog.Ok
+        Label {
+            text: "Blanks must be filled."
+        }
     }
 
-    MessageDialog {
+    Dialog {
         id: failedBind
+        x: (parent.width-width)>>1
+        y: (parent.height-height)>>1
         title: "Error"
-        text: "Failed to bind to local port."
-        icon: StandardIcon.Critical
+        standardButtons: Dialog.Ok
+        Label {
+            text: "Failed to bind to local port."
+        }
     }
 
     header: ToolBar {
