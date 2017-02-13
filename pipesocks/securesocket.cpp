@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "securesocket.h"
 
-SecureSocket::SecureSocket(const QString &Password,QObject *parent):TcpSocket(parent),LocalPubKey(crypto_box_PUBLICKEYBYTES,0),LocalPriKey(crypto_box_SECRETKEYBYTES,0) {
+SecureSocket::SecureSocket(const QString &Password,bool passive,QObject *parent):TcpSocket(parent),passive(passive),LocalPubKey(crypto_box_PUBLICKEYBYTES,0),LocalPriKey(crypto_box_SECRETKEYBYTES,0) {
     connect(this,SIGNAL(stateChanged(QAbstractSocket::SocketState)),this,SLOT(StateChangedSlot(QAbstractSocket::SocketState)));
     if (sodium_init()==-1)
         QCoreApplication::exit(1);
@@ -39,17 +39,21 @@ QByteArray SecureSocket::XOR(const QByteArray &Data,const QByteArray &Key1,const
     return XOR(XOR(Data,Key1),Key2);
 }
 
+void SecureSocket::SendPubKey() {
+    QByteArray nonce(1,randombytes_random());
+    QByteArray prefix(2,0);
+    unsigned int l=randombytes_uniform(500)+2000;
+    QByteArray garbage(l,0);
+    randombytes_buf(garbage.data(),l);
+    l+=crypto_box_PUBLICKEYBYTES+crypto_generichash_BYTES+3;
+    prefix[0]=(unsigned char)(l>>8);
+    prefix[1]=(unsigned char)l;
+    write(nonce+XOR(prefix,Password,nonce)+garbage+Hash(garbage+Password)+XOR(LocalPubKey,Password));
+}
+
 void SecureSocket::StateChangedSlot(QAbstractSocket::SocketState state) {
-    if (state==ConnectedState) {
-        QByteArray nonce(1,randombytes_random());
-        QByteArray prefix(2,0);
-        unsigned int l=randombytes_uniform(500)+2000;
-        QByteArray garbage(l,0);
-        randombytes_buf(garbage.data(),l);
-        l+=crypto_box_PUBLICKEYBYTES+crypto_generichash_BYTES+3;
-        prefix[0]=(unsigned char)(l>>8);
-        prefix[1]=(unsigned char)l;
-        write(nonce+XOR(prefix,Password,nonce)+garbage+Hash(garbage+Password)+XOR(LocalPubKey,Password));
+    if (state==ConnectedState&&!passive) {
+        SendPubKey();
     }
 }
 
@@ -88,6 +92,9 @@ void SecureSocket::RecvDataSlot() {
             QByteArray garbage(segment.left(segment.length()-crypto_box_PUBLICKEYBYTES-crypto_generichash_BYTES));
             if (Hash(garbage+Password)==segment.mid(garbage.length(),crypto_generichash_BYTES)) {
                 RemotePubKey=XOR(segment.right(crypto_box_PUBLICKEYBYTES),Password);
+                if (passive) {
+                    SendPubKey();
+                }
                 for (QList<QByteArray>::iterator it=SendBuffer.begin();it!=SendBuffer.end();++it)
                     SendUnencrypted(it.i->t());
                 SendBuffer.clear();
