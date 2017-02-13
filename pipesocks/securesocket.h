@@ -30,17 +30,16 @@ public:
     explicit SecureSocket(const QString &Password,bool passive,QObject *parent = 0);
 private:
     bool passive;
-    QByteArray LocalPubKey,LocalPriKey,RemotePubKey;
+    QByteArray LocalPubKey,LocalPriKey,RemotePubKey,SecretKey;
     QList<QByteArray>SendBuffer;
     QByteArray RecvBuffer;
-    QByteArray Encrypt(const QByteArray &Data);
-    QByteArray Decrypt(const QByteArray &Data);
+    QByteArray PublicEncrypt(const QByteArray &Data);
+    QByteArray PublicDecrypt(const QByteArray &Data);
+    QByteArray SecretEncrypt(const QByteArray &Data);
+    QByteArray SecretDecrypt(const QByteArray &Data);
+    void SendEncrypted(const QByteArray &Data);
     void SendPubKey();
     void SendUnencrypted(const QByteArray &Data);
-    QByteArray XOR(const QByteArray &Data,const QByteArray &Key);
-    QByteArray XOR(const QByteArray &Data,const QByteArray &Key1,const QByteArray &Key2);
-    QByteArray Hash(const QByteArray &Data);
-    QByteArray Password;
 private slots:
     void StateChangedSlot(QAbstractSocket::SocketState state);
     void SendDataSlot(const QByteArray &Data);
