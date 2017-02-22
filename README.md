@@ -25,12 +25,20 @@ Or
 
 ###### This program supports TCP and UDP.
 
-## Deployment
+## Tutorial
+
+A full tutorial in Mandarin about how to use pipesocks is located [here](https://pipesocks.github.io/md/tutorial).
+
+## Download
+
+Pre-compiled files for various platforms can be found [here](https://pipesocks.github.io).
+
+## Compilation
 ### General
 Download & install Qt Creator with Qt (above 5.7) and libsodium. Open the project with Qt Creator, set include path and link path and compile. 
 
 ### Ubuntu Server
-Since most Ubuntu servers doesn't hold a GUI, here is the way to deploy pipesocks in them. 
+Since most Ubuntu servers don't hold a GUI, here is the way to deploy pipesocks in them. 
 
 Type this command in your terminal: 
 
