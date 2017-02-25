@@ -30,10 +30,12 @@ SecureSocket::SecureSocket(const QString &Password,bool passive,QObject *parent)
 }
 
 void SecureSocket::SendEncrypted(const QByteArray &Data) {
-    QByteArray prefix(2,0);
-    unsigned int l=crypto_secretbox_MACBYTES+2+crypto_secretbox_NONCEBYTES+Data.size();
-    prefix[0]=(unsigned char)(l>>8);
-    prefix[1]=(unsigned char)l;
+    QByteArray prefix(4,0);
+    unsigned int l=crypto_secretbox_MACBYTES+4+crypto_secretbox_NONCEBYTES+Data.size();
+    prefix[0]=(unsigned char)(l>>24);
+    prefix[1]=(unsigned char)(l>>16);
+    prefix[2]=(unsigned char)(l>>8);
+    prefix[3]=(unsigned char)l;
     write(SecretEncrypt(prefix)+Data);
 }
 
@@ -57,25 +59,25 @@ void SecureSocket::SendUnencrypted(const QByteArray &Data) {
 void SecureSocket::SendDataSlot(const QByteArray &Data) {
     if (state()==QAbstractSocket::UnconnectedState)
         return;
-    for (int i=0;i<=Data.length()/2001;++i) {
-        if (RemotePubKey.size()==0)
-            SendBuffer.push_back(Data.mid(i*2000,2000));
-        else
-            SendUnencrypted(Data.mid(i*2000,2000));
-    }
+    if (RemotePubKey.size()==0)
+        SendBuffer.push_back(Data);
+    else
+        SendUnencrypted(Data);
 }
 
 void SecureSocket::RecvDataSlot() {
     RecvBuffer+=readAll();
-    while ((unsigned int)RecvBuffer.length()>=crypto_secretbox_MACBYTES+2+crypto_secretbox_NONCEBYTES) {
-        QByteArray prefix(SecretDecrypt(RecvBuffer.left(crypto_secretbox_MACBYTES+2+crypto_secretbox_NONCEBYTES)));
+    while ((unsigned int)RecvBuffer.length()>=crypto_secretbox_MACBYTES+4+crypto_secretbox_NONCEBYTES) {
+        QByteArray prefix(SecretDecrypt(RecvBuffer.left(crypto_secretbox_MACBYTES+4+crypto_secretbox_NONCEBYTES)));
         if (prefix=="")
             return;
         unsigned int l=(unsigned char)prefix[0];
         l=(l<<8)+(unsigned char)prefix[1];
+        l=(l<<8)+(unsigned char)prefix[2];
+        l=(l<<8)+(unsigned char)prefix[3];
         if ((unsigned int)RecvBuffer.length()<l)
             return;
-        QByteArray segment(RecvBuffer.left(l).mid(crypto_secretbox_MACBYTES+2+crypto_secretbox_NONCEBYTES));
+        QByteArray segment(RecvBuffer.left(l).mid(crypto_secretbox_MACBYTES+4+crypto_secretbox_NONCEBYTES));
         RecvBuffer=RecvBuffer.mid(l);
         if (RemotePubKey.size()==0) {
             RemotePubKey=SecretDecrypt(segment).right(crypto_box_PUBLICKEYBYTES);
