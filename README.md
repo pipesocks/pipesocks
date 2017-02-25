@@ -2,7 +2,7 @@
 
 # pipesocks
 
-[![pipesocks](https://img.shields.io/badge/pipesocks-2.2-yellow.svg?style=flat)](https://github.com/pipesocks/pipesocks)
+[![pipesocks](https://img.shields.io/badge/pipesocks-2.3-yellow.svg?style=flat)](https://github.com/pipesocks/pipesocks)
 [![yvbbrjdr](https://img.shields.io/badge/Coded%20by-yvbbrjdr-00ffff.svg?style=flat)](https://github.com/yvbbrjdr)
 [![powered](https://img.shields.io/badge/Powered%20by-Qt%20%7C%20libsodium-green.svg?style=flat)](https://github.com/pipesocks/pipesocks#dependencies)
 [![platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-ff69b4.svg?style=flat)](http://doc.qt.io/qt-5/supported-platforms.html)
@@ -31,7 +31,7 @@ A full tutorial in Mandarin about how to use pipesocks is located [here](https:/
 
 ## Download
 
-Pre-compiled files for various platforms can be found [here](https://pipesocks.github.io).
+Pre-compiled files for various platforms can be found [here](https://pipesocks.github.io/#download).
 
 ## Compilation
 ### General
@@ -40,13 +40,28 @@ Download & install Qt Creator with Qt (above 5.7) and libsodium. Open the projec
 ### Ubuntu Server
 Since most Ubuntu servers don't hold a GUI, here is the way to deploy pipesocks in them. 
 
-Type this command in your terminal: 
+Type these commands in your terminal: 
 
 ```bash
-curl https://raw.githubusercontent.com/pipesocks/pipesocks/stable/install.sh | sh
+sudo apt-get -y install git make build-essential qt5-default qt5-qmake
+cd /tmp/
+git clone https://github.com/jedisct1/libsodium.git
+git clone https://github.com/pipesocks/pipesocks.git
+cd libsodium/
+git checkout stable
+./configure
+make && sudo make install
+sudo cp /usr/local/lib/libsodium.so.18 /usr/lib/
+cd ../pipesocks/pipesocks/
+git checkout stable
+qmake server.pipesocks.pro && make
+sudo cp pipesocks /usr/bin/
+cd ../../
+sudo rm -R pipesocks/
+sudo rm -R libsodium/
 ```
 
-And you'll get a pipesocks binary file. 
+And you'll be able to run pipesocks.
 
 ### macOS
 To install libsodium, you can type these commands in your terminal: 
