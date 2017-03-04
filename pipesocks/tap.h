@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDateTime>
 #include <QHostAddress>
 #include <QPair>
+#include <sodium.h>
 #include "tcpsocket.h"
 #include "securesocket.h"
 #include "udpsocket.h"

@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QJsonDocument>
 #include <QVariantMap>
 #include <QDateTime>
+#include <sodium.h>
 #include "securesocket.h"
 #include "tcpsocket.h"
 #include "udpsocket.h"

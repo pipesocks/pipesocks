@@ -57,6 +57,7 @@ void Pump::ClientRecv(const QByteArray &Data) {
             }
             qvm2.insert("status","ok");
             qvm2.insert("protocol",qvm["protocol"].toString());
+            qvm2.insert("garbage",QString(randombytes_uniform(900),'f'));
             emit csock->SendData(QJsonDocument::fromVariant(qvm2).toJson());
             break;
         }

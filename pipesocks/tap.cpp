@@ -89,6 +89,7 @@ void Tap::ClientRecv(const QByteArray &Data) {
                 qvm.insert("protocol","UDP");
                 Log::log(csock,"requested UDP association");
             }
+            qvm.insert("garbage",QString(randombytes_uniform(900),'f'));
             emit ssock->SendData(QJsonDocument::fromVariant(qvm).toJson());
             break;
         }
