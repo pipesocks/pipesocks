@@ -6,7 +6,6 @@ RUN apt-get update -y && \
     apt-get install -y curl xz-utils libglib2.0-0 && \
     curl -SL https://github.com/pipesocks/pipesocks/releases/download/$version/pipesocks-$version-linux.tar.xz | \
     tar -xJ && \
-    rm pipesocks.tar.xz && \
     apt-get remove -y curl xz-utils && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
