@@ -1,8 +1,14 @@
-FROM ubuntu:latest
+FROM debian:stable-slim
+ENV version=2.3 \
+    port=7473 \
+    password=""
 RUN apt-get update -y && \
-    apt-get install -y xz-utils libglib2.0-0
-ADD https://github.com/pipesocks/pipesocks/releases/download/2.3/pipesocks-2.3-linux.tar.xz pipesocks-2.3-linux.tar.xz
-RUN tar -xJf pipesocks-2.3-linux.tar.xz
+    apt-get install -y curl xz-utils libglib2.0-0 && \
+    curl -SL https://github.com/pipesocks/pipesocks/releases/download/$version/pipesocks-$version-linux.tar.xz | \
+    tar -xJ && \
+    apt-get remove -y curl xz-utils && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
 WORKDIR pipesocks/
-EXPOSE 7473
-CMD ./runpipesocks.sh pump
+EXPOSE $port
+CMD ./runpipesocks.sh pump -p $port -k $password
