@@ -182,11 +182,11 @@ void Tap::UDPRecv(const QHostAddress &Host,unsigned short Port,const QByteArray 
     qvm.insert("host",hostport.first);
     qvm.insert("port",hostport.second);
     if (Data[3]==1)
-        qvm.insert("data",Data.mid(7).toBase64());
+        qvm.insert("data",Data.mid(10).toBase64());
     else if (Data[3]==3)
         qvm.insert("data",Data.mid(Data[4]+7).toBase64());
     else if (Data[3]==4)
-        qvm.insert("data",Data.mid(19).toBase64());
+        qvm.insert("data",Data.mid(22).toBase64());
     emit ssock->SendData(QJsonDocument::fromVariant(qvm).toJson());
     Log::log(csock,"sent a UDP package to "+hostport.first+':'+QString::number(hostport.second));
 }
