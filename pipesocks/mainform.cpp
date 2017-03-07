@@ -155,10 +155,13 @@ void MainForm::startClicked() {
         pump->setProperty("enabled",true);
         pipe->setProperty("enabled",true);
         tap->setProperty("enabled",true);
-        remoteHost->setProperty("enabled",true);
-        remotePort->setProperty("enabled",true);
-        localPort->setProperty("enabled",true);
-        password->setProperty("enabled",true);
+        if (pump->property("checked").toBool()) {
+            pumpClicked();
+        } else if (pipe->property("checked").toBool()) {
+            pipeClicked();
+        } else if (tap->property("checked").toBool()) {
+            tapClicked();
+        }
         start->setProperty("text","Start");
         headerText->setProperty("text","pipesocks "+Version::GetVersion());
     }
