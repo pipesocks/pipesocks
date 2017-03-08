@@ -2,6 +2,10 @@
 
 QT += core network
 
+QT -= gui
+
+CONFIG += console
+
 TARGET = pipesocks
 
 TEMPLATE = app
