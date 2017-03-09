@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM debian:oldstable-slim
 ENV version=2.3 \
     type=pump \
     remotehost="" \
