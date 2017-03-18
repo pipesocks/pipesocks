@@ -18,12 +18,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "version.h"
 
-QString Version::ver("2.3");//Change this line everytime you update
+const QVector<QString>Version::ver(QVector<QString>()<<"2.3");//Change this line everytime you update
 
-QString Version::GetVersion() {
-    return ver;
+QString Version::GetHighestVersion() {
+    return ver.last();
+}
+
+QString Version::GetLowestVersion() {
+    return ver.first();
 }
 
 bool Version::CheckVersion(const QString &version) {
-    return version==ver;
+    return ver.contains(version);
 }

@@ -81,7 +81,7 @@ void Tap::ClientRecv(const QByteArray &Data) {
             qvm.insert("host",hostport.first);
             qvm.insert("port",hostport.second);
             qvm.insert("password",Password);
-            qvm.insert("version",Version::GetVersion());
+            qvm.insert("version",Version::GetLowestVersion());
             if (Data[1]==1) {
                 qvm.insert("protocol","TCP");
                 Log::log(csock,"requested TCP connection to "+hostport.first+':'+QString::number(hostport.second));

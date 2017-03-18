@@ -20,12 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VERSION_H
 
 #include <QString>
+#include <QVector>
 
 class Version {
 private:
-    static QString ver;
+    const static QVector<QString>ver;
 public:
-    static QString GetVersion();
+    static QString GetHighestVersion();
+    static QString GetLowestVersion();
     static bool CheckVersion(const QString &version);
 };
 
