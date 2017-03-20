@@ -23,6 +23,7 @@ TcpServer::TcpServer(Mode mode,const QString &RemoteHost,unsigned short RemotePo
         gfwlist=new GFWList(this);
     else
         gfwlist=NULL;
+    setProxy(QNetworkProxy::NoProxy);
 }
 
 void TcpServer::incomingConnection(qintptr handle) {
