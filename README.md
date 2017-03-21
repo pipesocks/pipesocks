@@ -43,7 +43,7 @@ Since most Ubuntu servers don't hold a GUI, here is the way to deploy pipesocks 
 Type these commands in your terminal: 
 
 ```bash
-sudo apt-get -y install git make build-essential qt5-default qt5-qmake
+sudo apt-get -y install git make build-essential qt5-default qt5-qmake libtool autoconf automake
 cd /tmp/
 git clone https://github.com/pipesocks/pipesocks.git
 cd pipesocks/
