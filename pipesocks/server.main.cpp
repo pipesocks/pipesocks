@@ -44,14 +44,14 @@ int main(int argc,char **argv) {
             printf("Welcome to Pipesocks pump\nServer is listening at port %d\n",LocalPort);
         } else if (type=="pipe") {
             if (RemoteHost=="") {
-                printf("Remote Host requred\n%s",Usage.toStdString().c_str());
+                printf("Remote Host required\n%s",Usage.toStdString().c_str());
                 return 1;
             }
             server=new TcpServer(TcpServer::PipeServer,RemoteHost,RemotePort,Password);
             printf("Welcome to Pipesocks pipe\nServer is listening at port %d and connects to %s:%d\n",LocalPort,RemoteHost.toStdString().c_str(),RemotePort);
         } else if (type=="tap") {
             if (RemoteHost=="") {
-                printf("Remote Host requred\n%s",Usage.toStdString().c_str());
+                printf("Remote Host required\n%s",Usage.toStdString().c_str());
                 return 1;
             }
             server=new TcpServer(TcpServer::TapClient,RemoteHost,RemotePort,Password);

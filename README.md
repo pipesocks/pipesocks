@@ -45,20 +45,18 @@ Type these commands in your terminal:
 ```bash
 sudo apt-get -y install git make build-essential qt5-default qt5-qmake
 cd /tmp/
-git clone https://github.com/jedisct1/libsodium.git
 git clone https://github.com/pipesocks/pipesocks.git
-cd libsodium/
+cd pipesocks/
 git checkout stable
+git submodule update
+cd libsodium/
+./autogen.sh
 ./configure
 make && sudo make install
 sudo cp /usr/local/lib/libsodium.so.18 /usr/lib/
-cd ../pipesocks/pipesocks/
-git checkout stable
+cd ../pipesocks/
 qmake server.pipesocks.pro && make
 sudo cp pipesocks /usr/bin/
-cd ../../
-sudo rm -R pipesocks/
-sudo rm -R libsodium/
 ```
 
 And you'll be able to run pipesocks.
