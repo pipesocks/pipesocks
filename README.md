@@ -50,6 +50,7 @@ cd pipesocks/
 git checkout stable
 git submodule update
 cd libsodium/
+git checkout stable
 ./autogen.sh
 ./configure
 make && sudo make install
