@@ -48,9 +48,8 @@ cd /tmp/
 git clone https://github.com/pipesocks/pipesocks.git
 cd pipesocks/
 git checkout stable
-git submodule update
+git submodule update --init --recursive
 cd libsodium/
-git checkout stable
 ./autogen.sh
 ./configure
 make && sudo make install
